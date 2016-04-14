@@ -20,8 +20,8 @@ class ConnexionController extends Controller {
             $pass = $formData['motDePasse'];
 
             $em = $this->getDoctrine()->getManager();
-            $users = $em->getRepository("ALGsbBundle:Visiteur");
-            $visiteur = $users->findOneBy(array('login' => $login, 'mdp' => $pass));
+            $users = $em->getRepository("ALGsbBundle:Utilisateur");
+            $visiteur = $users->findOneBy(array('login' => $login, 'pass' => $pass));
 
             if ($visiteur != null) {
                 $_SESSION["visiteur"] = $visiteur;

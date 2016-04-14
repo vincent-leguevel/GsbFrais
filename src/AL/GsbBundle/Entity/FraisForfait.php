@@ -31,9 +31,65 @@ class FraisForfait
     /**
      * @var string
      *
-     * @ORM\Column(name="montant", type="decimal")
+     * @ORM\Column(name="montant", type="decimal",precision=10, scale=2)
      */
     private $montant;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set libelle
+     *
+     * @param string $libelle
+     * @return FraisForfait
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    /**
+     * Get libelle
+     *
+     * @return string 
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * Set montant
+     *
+     * @param string $montant
+     * @return FraisForfait
+     */
+    public function setMontant($montant)
+    {
+        $this->montant = $montant;
+
+        return $this;
+    }
+
+    /**
+     * Get montant
+     *
+     * @return string 
+     */
+    public function getMontant()
+    {
+        return $this->montant;
+    }
 }

@@ -24,10 +24,43 @@ class Etat
     /**
      * @var string
      *
-     * @ORM\Column(name="libelle", type="string", length=25)
+     * @ORM\Column(name="libelle", type="string", length=30)
      */
     private $libelle;
 
 
    
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set libelle
+     *
+     * @param string $libelle
+     * @return Etat
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    /**
+     * Get libelle
+     *
+     * @return string 
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
 }

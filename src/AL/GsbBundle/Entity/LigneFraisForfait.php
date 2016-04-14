@@ -28,6 +28,51 @@ class LigneFraisForfait
      */
     private $quantite;
 
+    /*
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    
+    private $ficheFrais;
+    
+    /*
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FraisForfait")
+     * @JoinColumn(nullable=false) 
+     */
+    private $fraisForfait;
 
    
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set quantite
+     *
+     * @param integer $quantite
+     * @return LigneFraisForfait
+     */
+    public function setQuantite($quantite)
+    {
+        $this->quantite = $quantite;
+
+        return $this;
+    }
+
+    /**
+     * Get quantite
+     *
+     * @return integer 
+     */
+    public function getQuantite()
+    {
+        return $this->quantite;
+    }
 }

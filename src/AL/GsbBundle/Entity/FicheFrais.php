@@ -38,7 +38,7 @@ class FicheFrais
     /**
      * @var string
      *
-     * @ORM\Column(name="montantValide", type="decimal")
+     * @ORM\Column(name="montantValide", type="decimal",precision=10, scale=2)
      */
     private $montantValide;
 
@@ -52,6 +52,7 @@ class FicheFrais
 
     /*
      * @ORM\ManyToOne(targuetEntity="AL\GsbBundle\Entity\Etat")
+     * @ORM\JoinColumn(nullable=false)
      */
     
     private $etat;
@@ -63,4 +64,106 @@ class FicheFrais
     
     private $utilisateur;
    
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set mois
+     *
+     * @param integer $mois
+     * @return FicheFrais
+     */
+    public function setMois($mois)
+    {
+        $this->mois = $mois;
+
+        return $this;
+    }
+
+    /**
+     * Get mois
+     *
+     * @return integer 
+     */
+    public function getMois()
+    {
+        return $this->mois;
+    }
+
+    /**
+     * Set nbJustificatifs
+     *
+     * @param integer $nbJustificatifs
+     * @return FicheFrais
+     */
+    public function setNbJustificatifs($nbJustificatifs)
+    {
+        $this->nbJustificatifs = $nbJustificatifs;
+
+        return $this;
+    }
+
+    /**
+     * Get nbJustificatifs
+     *
+     * @return integer 
+     */
+    public function getNbJustificatifs()
+    {
+        return $this->nbJustificatifs;
+    }
+
+    /**
+     * Set montantValide
+     *
+     * @param string $montantValide
+     * @return FicheFrais
+     */
+    public function setMontantValide($montantValide)
+    {
+        $this->montantValide = $montantValide;
+
+        return $this;
+    }
+
+    /**
+     * Get montantValide
+     *
+     * @return string 
+     */
+    public function getMontantValide()
+    {
+        return $this->montantValide;
+    }
+
+    /**
+     * Set dateModif
+     *
+     * @param \DateTime $dateModif
+     * @return FicheFrais
+     */
+    public function setDateModif($dateModif)
+    {
+        $this->dateModif = $dateModif;
+
+        return $this;
+    }
+
+    /**
+     * Get dateModif
+     *
+     * @return \DateTime 
+     */
+    public function getDateModif()
+    {
+        return $this->dateModif;
+    }
 }
