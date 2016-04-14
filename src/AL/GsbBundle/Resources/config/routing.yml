@@ -1,0 +1,19 @@
+al_gsb_connexion:
+    path:    /
+    defaults: { _controller: ALGsbBundle:Connexion:index }
+    
+al_gsb_accueil:
+    path:   /accueil
+    defaults: { _controller: ALGsbBundle:Accueil:index } 
+    
+al_gsb_saisir_frais:
+    path:   /saisirFrais
+    defaults: { _controller: ALGsbBundle:SaisirFrais:index }
+    
+al_gsb_consulter_frais:
+    path:   /consulterFrais
+    defaults: { _controller: ALGsbBundle:ConsulterFrais:index }
+    
+al_gsb_deconnexion:
+    path:   /logout
+    defaults: { _controller: ALGsbBundle:Deconnexion:index }

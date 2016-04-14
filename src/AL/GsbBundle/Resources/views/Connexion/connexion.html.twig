@@ -1,0 +1,68 @@
+{% extends 'ALGsbBundle::base.html.twig' %}
+
+
+{% block head %}
+    {{ parent() }}
+    <title>Bienvenue sur GSB</title>
+    <center><img src="{{ asset('bundles/algsb/images/gsb.png') }}" /></center><br />
+    {% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <center><div class="well col-lg-6 col-sm-offset-3">
+                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+                {{ form_errors(form) }}
+
+                <div class="form-group">
+                    {% if hasError is defined %}
+                        <div class="alert alert-danger">
+                            <a href="#" class="close fade" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{hasError}}
+                        </div>
+                    {% endif %}
+                    {# Génération du label. #}
+                    {{ form_label(form.nomDeCompte, "Identifiant", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.nomDeCompte) }}
+
+                    <div class="col-sm-8">
+
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.nomDeCompte, {'attr': {'class': 'form-control'}}) }}
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    {{ form_label(form.motDePasse, "Mot de passe", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+                    {{ form_errors(form.motDePasse) }}
+
+                    <div class="col-sm-8">
+
+                        {{ form_widget(form.motDePasse, {'attr': {'class': 'form-control'}}) }}
+
+                    </div>
+
+                </div>
+
+
+                {{ form_widget(form.valider, {'attr': {'class': 'btn btn-primary'}}) }}
+                {{ form_widget(form.reinitialiser, {'attr': {'class': 'btn btn-primary'}}) }}  
+
+                {# Fermeture de la balise <form> du formulaire HTML #}
+
+                {{ form_end(form) }}
+
+
+
+            </div></center>
+
+    {% endblock %}
+
+    {% block footer %}
+        {{ parent() }}
+    {% endblock %}

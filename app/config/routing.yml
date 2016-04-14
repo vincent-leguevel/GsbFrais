@@ -1,0 +1,4 @@
+al_gsb:
+    resource: "@ALGsbBundle/Resources/config/routing.yml"
+    prefix:   /
+

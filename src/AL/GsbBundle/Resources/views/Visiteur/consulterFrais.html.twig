@@ -1,0 +1,31 @@
+{% extends 'ALGsbBundle::base.html.twig' %}
+
+
+{% block head %}
+    {{ parent() }}
+    <title>GSB | Suivi des Frais</title>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <div class="page-header">
+                    <center><h2>Suivi de vos frais </h2></center>
+                </div>
+                <ol class="breadcrumb">
+                    <li><a href="{{path('al_gsb_deconnexion')}}">déconnexion</a></li>
+                    <li><a href="{{path('al_gsb_accueil')}}">accueil</a></li>
+                    <li class="active">suivi de vos frais</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+{% endblock %}

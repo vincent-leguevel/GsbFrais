@@ -1,0 +1,25 @@
+{# ALGsbBundle/Resources/views/base.html.twig #}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        <link rel="stylesheet" href="{{ asset('bundles/algsb/css/bootstrap.css') }}" />
+        <script src="{{ asset('bundles/algsb/js/jquery-2.1.4.min.js') }}"></script>
+        <script src="{{ asset('bundles/algsb/js/bootstrap.js') }}"></script>           
+    {% endblock %}
+</head>
+<body>
+    <div id="content">
+        {% block body %}
+
+        {% endblock %}
+    </div>
+
+    <div id="footer">
+        {% block footer %}
+            <link rel="stylesheet" href="{{ asset('bundles/algsb/css/page.css') }}" type="text/css" />
+            <center>&copy; Copyright 2015-2016 by Aurélien ALVES / Vincent LE GUEVEL</center>
+            {% endblock %}
+    </div>
+</body>
+</html>
