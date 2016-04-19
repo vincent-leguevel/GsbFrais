@@ -43,13 +43,16 @@ class LigneFraisHorsForfait
     private $montant;
 
 
-    /*
-     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais")
+    /**
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais", inversedBy="lignesFraisHorsForfait", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
+     * 
      */
     
     private $ficheFrais;
     
+
+
 
     /**
      * Get id
@@ -128,5 +131,28 @@ class LigneFraisHorsForfait
     public function getMontant()
     {
         return $this->montant;
+    }
+
+    /**
+     * Set ficheFrais
+     *
+     * @param \AL\GsbBundle\Entity\FicheFrais $ficheFrais
+     * @return LigneFraisHorsForfait
+     */
+    public function setFicheFrais(\AL\GsbBundle\Entity\FicheFrais $ficheFrais)
+    {
+        $this->ficheFrais = $ficheFrais;
+
+        return $this;
+    }
+
+    /**
+     * Get ficheFrais
+     *
+     * @return \AL\GsbBundle\Entity\FicheFrais 
+     */
+    public function getFicheFrais()
+    {
+        return $this->ficheFrais;
     }
 }

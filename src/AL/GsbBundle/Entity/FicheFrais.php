@@ -22,11 +22,11 @@ class FicheFrais
     private $id;
 
     /**
-     * @var integer
+     * @var \DateTime
      *
-     * @ORM\Column(name="mois", type="integer")
+     * @ORM\Column(name="dateRedac", type="date")
      */
-    private $mois;
+    private $dateRedac;
 
     /**
      * @var integer
@@ -50,20 +50,41 @@ class FicheFrais
     private $dateModif;
 
 
-    /*
-     * @ORM\ManyToOne(targuetEntity="AL\GsbBundle\Entity\Etat")
+    /**
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\Etat")
      * @ORM\JoinColumn(nullable=false)
      */
     
     private $etat;
     
-    /*
-     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\Utilisateur")
+    /**
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\Utilisateur", inversedBy="fichesFrais", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     
     private $utilisateur;
    
+    /**
+     * @ORM\OneToMany(targetEntity="AL\GsbBundle\Entity\LigneFraisForfait", mappedBy="ficheFrais",cascade={"persist","remove"})
+     */
+    private $lignesFraisForfait;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AL\GsbBundle\Entity\LigneFraisHorsForfait", mappedBy="ficheFrais",cascade={"persist","remove"})
+     * 
+     */
+    private $lignesFraisHorsForfait;
+  
+    
+ 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->lignesFraisForfait = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->lignesFraisHorsForfait = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -76,26 +97,26 @@ class FicheFrais
     }
 
     /**
-     * Set mois
+     * Set dateRedac
      *
-     * @param integer $mois
+     * @param \DateTime $dateRedac
      * @return FicheFrais
      */
-    public function setMois($mois)
+    public function setDateRedac($dateRedac)
     {
-        $this->mois = $mois;
+        $this->dateRedac = $dateRedac;
 
         return $this;
     }
 
     /**
-     * Get mois
+     * Get dateRedac
      *
-     * @return integer 
+     * @return \DateTime 
      */
-    public function getMois()
+    public function getDateRedac()
     {
-        return $this->mois;
+        return $this->dateRedac;
     }
 
     /**
@@ -165,5 +186,117 @@ class FicheFrais
     public function getDateModif()
     {
         return $this->dateModif;
+    }
+
+    /**
+     * Set etat
+     *
+     * @param \AL\GsbBundle\Entity\Etat $etat
+     * @return FicheFrais
+     */
+    public function setEtat(\AL\GsbBundle\Entity\Etat $etat)
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    /**
+     * Get etat
+     *
+     * @return \AL\GsbBundle\Entity\Etat 
+     */
+    public function getEtat()
+    {
+        return $this->etat;
+    }
+
+    /**
+     * Set utilisateur
+     *
+     * @param \AL\GsbBundle\Entity\Utilisateur $utilisateur
+     * @return FicheFrais
+     */
+    public function setUtilisateur(\AL\GsbBundle\Entity\Utilisateur $utilisateur = null)
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    /**
+     * Get utilisateur
+     *
+     * @return \AL\GsbBundle\Entity\Utilisateur 
+     */
+    public function getUtilisateur()
+    {
+        return $this->utilisateur;
+    }
+
+    /**
+     * Add lignesFraisForfait
+     *
+     * @param \AL\GsbBundle\Entity\LigneFraisForfait $lignesFraisForfait
+     * @return FicheFrais
+     */
+    public function addLignesFraisForfait(\AL\GsbBundle\Entity\LigneFraisForfait $lignesFraisForfait)
+    {
+        $this->lignesFraisForfait[] = $lignesFraisForfait;
+
+        return $this;
+    }
+
+    /**
+     * Remove lignesFraisForfait
+     *
+     * @param \AL\GsbBundle\Entity\LigneFraisForfait $lignesFraisForfait
+     */
+    public function removeLignesFraisForfait(\AL\GsbBundle\Entity\LigneFraisForfait $lignesFraisForfait)
+    {
+        $this->lignesFraisForfait->removeElement($lignesFraisForfait);
+    }
+
+    /**
+     * Get lignesFraisForfait
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLignesFraisForfait()
+    {
+        return $this->lignesFraisForfait;
+    }
+
+    /**
+     * Add lignesFraisHorsForfait
+     *
+     * @param \AL\GsbBundle\Entity\LigneFraisHorsForfait $lignesFraisHorsForfait
+     * @return FicheFrais
+     */
+    public function addLignesFraisHorsForfait(\AL\GsbBundle\Entity\LigneFraisHorsForfait $lignesFraisHorsForfait)
+    {
+        $this->lignesFraisHorsForfait[] = $lignesFraisHorsForfait;
+
+        return $this;
+    }
+
+    /**
+     * Remove lignesFraisHorsForfait
+     *
+     * @param \AL\GsbBundle\Entity\LigneFraisHorsForfait $lignesFraisHorsForfait
+     */
+    public function removeLignesFraisHorsForfait(\AL\GsbBundle\Entity\LigneFraisHorsForfait $lignesFraisHorsForfait)
+    {
+        $this->lignesFraisHorsForfait->removeElement($lignesFraisHorsForfait);
+    }
+
+    /**
+     * Get lignesFraisHorsForfait
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLignesFraisHorsForfait()
+    {
+        return $this->lignesFraisHorsForfait;
     }
 }

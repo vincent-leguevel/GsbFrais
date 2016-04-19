@@ -24,7 +24,11 @@ class ConnexionController extends Controller {
             $visiteur = $users->findOneBy(array('login' => $login, 'pass' => $pass));
 
             if ($visiteur != null) {
-                $_SESSION["visiteur"] = $visiteur;
+                if($visiteur->getFonction()=="C"){
+                    $_SESSION["comptable"] = $visiteur;
+                }else{
+                    $_SESSION["visiteur"] = $visiteur;
+                }
 
                 return $this->redirectToRoute('al_gsb_accueil');
             } else {

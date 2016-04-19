@@ -12,4 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class FicheFraisRepository extends EntityRepository
 {
+    
+    public function byUserAndDate($date,$user){
+        return  $this->createQueryBuilder('u')
+                     ->where('u.utilisateur = :user and u.dateRedac like :date')
+                     ->setParameter('user', $user)
+                     ->setParameter('date', $date.'%')
+                     ->getQuery()
+                     ->getOneOrNullResult();
+    }
 }

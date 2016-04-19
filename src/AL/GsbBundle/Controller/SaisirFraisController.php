@@ -7,44 +7,80 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SaisirFraisController extends Controller {
 
     public function indexAction() {
-        
+
         if (!isset($_SESSION["visiteur"])) {
             return $this->redirectToRoute('al_gsb_connexion');
         }
-        
-        $form = $this->createFormBuilder()
-                ->add('mois', 'text')
-                ->add('valider', 'submit')
-                ->getForm();
+        $user = $this->getDoctrine()->getManager()->getRepository("ALGsbBundle:Utilisateur")->find($_SESSION['visiteur']->getId());
+        $ficheFrais = new \AL\GsbBundle\Entity\FicheFrais();
+        $ficheFrais = $this->getDoctrine()->getManager()->getRepository("ALGsbBundle:FicheFrais")->byUserAndDate(date("Y") . "-" . date("m"), $user);
 
-        $form->handleRequest($this->get('request'));
-        if ($form->isValid()) {
-            $formData = $form->getData();
-            $mois = $formData['mois'];
+        if ($ficheFrais != null) {
+            $form = $this->buildForm($ficheFrais);
 
-            if($mois >= 1 AND $mois <= 12){
-                return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig',array('formDate'=>$form->createView(),'formFrais'=>$this->getMoisByID($mois)));
+            $form->handleRequest($this->get('request'));
+            if ($form->isValid()) {
+                $formData = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+
+                $ligneFraisForfait = new \AL\GsbBundle\Entity\LigneFraisForfait();
+
+                for ($i = 1; $i <= 4; $i++) {
+                    $ligneFraisForfait = new \AL\GsbBundle\Entity\LigneFraisForfait();
+                    $ligneFraisForfait->setFicheFrais($ficheFrais);
+
+                    $ligneFraisForfait->setFraisForfait($this->findFraisForfait($i));
+                    if ($i == 1) {
+                        $ligneFraisForfait->setQuantite($formData['etape']);
+                    } elseif ($i == 2) {
+                        $ligneFraisForfait->setQuantite($formData['km']);
+                    } elseif ($i == 3) {
+                        $ligneFraisForfait->setQuantite($formData['nuitees']);
+                    } elseif ($i == 4) {
+                        $ligneFraisForfait->setQuantite($formData['repasMidi']);
+                    }
+                    $em->persist($ligneFraisForfait);
+                    $em->flush();
+                    $ligneFraisForfait = null;
+                }
+                $ficheFrais->setNbJustificatifs($formData['nbJustificatifs']);
+                $ficheFrais->setDateModif(new \DateTime(date('Y') . "-" . date('m') . "-" . date('d')));
+                $em->persist($ficheFrais);
+                $em->flush();
+                return $this->redirectToRoute('al_gsb_saisir_frais');
             }
-            else{
-                return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('formDate'=>$form->createView(),'hasError'=>'Le mois doit être compris entre 1 à 12'));
-            }
+
+            return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('saisir' => true, 'form' => $form->createView(), 'ficheFrais' => $ficheFrais));
+        } else {
+            return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('creerFiche' => true, 'mois' => $this->getMoisByID(date('m'))));
         }
-
-
-        return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig',array('formDate'=>$form->createView(),'formFrais'=>$this->getMoisByID(date('m'))));
     }
 
-    public function buildFormFrais(){
+    public function creerFraisAction() {
 
-        return $this->createFormBuilder()
-                    ->add('repasMidi','text')
-                    ->add('nuitees','text')
-                    ->add('etape','text')
-                    ->add('km','text')
-                    ->getForm();
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $em->getRepository("ALGsbBundle:Utilisateur")->find($_SESSION['visiteur']->getId());
+        $date = date('Y') . "-" . date('m') . "-" . date('d');
+
+        $ficheFrais = new \AL\GsbBundle\Entity\FicheFrais();
+
+        $ficheFrais->setDateRedac(new \DateTime($date));
+        $ficheFrais->setDateModif(new \DateTime($date));
+        $ficheFrais->setNbJustificatifs(0);
+        $ficheFrais->setMontantValide(0);
+
+        $etat = $em->getRepository('ALGsbBundle:Etat')->find(3);
+        $ficheFrais->setEtat($etat);
+        $ficheFrais->setUtilisateur($user);
+
+        $em->persist($ficheFrais);
+        $em->flush();
+
+        return $this->redirectToRoute('al_gsb_saisir_frais');
     }
 
-    public function getMoisByID($number){
+    private function getMoisByID($number) {
         switch ($number) {
             case 1:
                 return "de Janvier";
@@ -83,6 +119,47 @@ class SaisirFraisController extends Controller {
                 return "de Decembre";
                 break;
         }
+    }
+
+    private function buildForm($ficheFrais) {
+        $em = $this->getDoctrine()->getManager();
+        $ligneFraisForfait = new \AL\GsbBundle\Entity\LigneFraisForfait();
+        $lignesFraisForfait = $em->getRepository('ALGsbBundle:LigneFraisForfait')->findBy(array('ficheFrais' => $ficheFrais->getId()));
+
+        $form = $this->createFormBuilder();
+        if ($lignesFraisForfait == null) {
+            $form->add('etape', 'integer', array('data' => 0));
+            $form->add('km', 'integer', array('data' => 0));
+            $form->add('nuitees', 'integer', array('data' => 0));
+            $form->add('repasMidi', 'integer', array('data' => 0));
+            $form->add('nbJustificatifs', 'integer', array('data' => 0));
+        } else {
+            foreach ($lignesFraisForfait as $ligneFraisForfait) {
+
+                $fraisForfait = $ligneFraisForfait->getFraisForfait();
+                if ($fraisForfait->getId() == 1) {
+                    $form->add('etape', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                } elseif ($fraisForfait->getId() == 2) {
+                    $form->add('km', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                } elseif ($fraisForfait->getId() == 3) {
+                    $form->add('nuitees', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                } elseif ($fraisForfait->getId() == 4) {
+                    $form->add('repasMidi', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                }
+            }
+            $form->add('nbJustificatifs', 'integer', array('data' => $ficheFrais->getNbJustificatifs()));
+        }
+
+        $form->add('Valider', 'submit');
+        $form->add('Annuler', 'reset');
+        return $form->getForm();
+    }
+
+    private function findFraisForfait($id) {
+        $em = $this->getDoctrine()->getManager();
+        $fraisForfait = $em->getRepository('ALGsbBundle:FraisForfait')->find($id);
+
+        return $fraisForfait;
     }
 
 }

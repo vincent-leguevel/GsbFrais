@@ -28,20 +28,21 @@ class LigneFraisForfait
      */
     private $quantite;
 
-    /*
-     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais")
+    /**
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais", inversedBy="lignesFraisForfait", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     
     private $ficheFrais;
     
-    /*
+    /**
      * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FraisForfait")
-     * @JoinColumn(nullable=false) 
+     * @ORM\JoinColumn(nullable=false) 
      */
     private $fraisForfait;
 
-   
+
+
 
     /**
      * Get id
@@ -74,5 +75,51 @@ class LigneFraisForfait
     public function getQuantite()
     {
         return $this->quantite;
+    }
+
+    /**
+     * Set ficheFrais
+     *
+     * @param \AL\GsbBundle\Entity\FicheFrais $ficheFrais
+     * @return LigneFraisForfait
+     */
+    public function setFicheFrais(\AL\GsbBundle\Entity\FicheFrais $ficheFrais)
+    {
+        $this->ficheFrais = $ficheFrais;
+
+        return $this;
+    }
+
+    /**
+     * Get ficheFrais
+     *
+     * @return \AL\GsbBundle\Entity\FicheFrais 
+     */
+    public function getFicheFrais()
+    {
+        return $this->ficheFrais;
+    }
+
+    /**
+     * Set fraisForfait
+     *
+     * @param \AL\GsbBundle\Entity\FraisForfait $fraisForfait
+     * @return LigneFraisForfait
+     */
+    public function setFraisForfait(\AL\GsbBundle\Entity\FraisForfait $fraisForfait)
+    {
+        $this->fraisForfait = $fraisForfait;
+
+        return $this;
+    }
+
+    /**
+     * Get fraisForfait
+     *
+     * @return \AL\GsbBundle\Entity\FraisForfait 
+     */
+    public function getFraisForfait()
+    {
+        return $this->fraisForfait;
     }
 }

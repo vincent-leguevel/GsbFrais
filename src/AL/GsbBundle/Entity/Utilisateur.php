@@ -84,7 +84,20 @@ class Utilisateur
      */
     private $dateEmbauche;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AL\GsbBundle\Entity\FicheFrais", mappedBy="utilisateur",cascade={"persist","remove"})
+     */
+    
+    private $fichesFrais;
 
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->fichesFrais = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -301,5 +314,38 @@ class Utilisateur
     public function getDateEmbauche()
     {
         return $this->dateEmbauche;
+    }
+
+    /**
+     * Add fichesFrais
+     *
+     * @param \AL\GsbBundle\Entity\FicheFrais $fichesFrais
+     * @return Utilisateur
+     */
+    public function addFichesFrai(\AL\GsbBundle\Entity\FicheFrais $fichesFrais)
+    {
+        $this->fichesFrais[] = $fichesFrais;
+
+        return $this;
+    }
+
+    /**
+     * Remove fichesFrais
+     *
+     * @param \AL\GsbBundle\Entity\FicheFrais $fichesFrais
+     */
+    public function removeFichesFrai(\AL\GsbBundle\Entity\FicheFrais $fichesFrais)
+    {
+        $this->fichesFrais->removeElement($fichesFrais);
+    }
+
+    /**
+     * Get fichesFrais
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFichesFrais()
+    {
+        return $this->fichesFrais;
     }
 }

@@ -9,6 +9,16 @@ al_gsb_accueil:
 al_gsb_saisir_frais:
     path:   /saisirFrais
     defaults: { _controller: ALGsbBundle:SaisirFrais:index }
+
+al_gsb_creer_frais:
+    path:   /creerFrais
+    defaults: { _controller: ALGsbBundle:SaisirFrais:creerFrais }
+    
+    
+    
+    
+    
+    
     
 al_gsb_consulter_frais:
     path:   /consulterFrais
