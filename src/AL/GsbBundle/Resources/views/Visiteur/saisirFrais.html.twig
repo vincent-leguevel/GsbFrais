@@ -22,11 +22,39 @@
                 </ol>
             </div>
             <div class="row">
-                <div class="col-lg-8  col-lg-offset-2">
+                <div class="col-lg-8  col-lg-offset-2">                    
                     {% if saisir is defined %}
-                        {{form(form)}}
-                        
-                        <p><a class="btn btn-info" href="" role="button">Ajouter un hors forfait</a></p>
+                        <center>
+                            <div class="page-header">
+                                <h3>Fiche de frais pour le mois {{mois}}.</h3>
+                            </div>
+                            {{form(form)}}
+                            <hr>
+                            {% if lignesFraisHorsForfait is empty%}
+                                <h4>Vous n'avez pas de hors forfait pour le mois en cours.</h4>
+                            {% endif %}
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Libelle</th>
+                                        <th>Date frais</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ligneFraisHorsForfait in lignesFraisHorsForfait%}
+                                    <tr>
+                                        <td>{{ligneFraisHorsForfait.libelle}}</td>
+                                        <td>{{ligneFraisHorsForfait.dateFrais |date("d/m/Y")}}</td>
+                                        <td>{{ligneFraisHorsForfait.montant}}</td>
+                                        <td><a class="btn btn-danger" href="{{path('al_gsb_supprimer_hors_frais',{'id_ligneFraisHorsForfait': ligneFraisHorsForfait.id})}}" role="button">supprimer</a></p></td>
+                                    </tr>
+                                    {% endfor%}
+                                </tbody>
+                            </table>
+                            <p><a class="btn btn-info" href="{{path('al_gsb_saisir_hors_frais',{'id_ficheFrais': ficheFrais.id})}}" role="button">Ajouter un hors forfait</a></p>
+                        </center>
+
                     {% endif %}
                     {% if creerFiche is defined %}
                         <center>

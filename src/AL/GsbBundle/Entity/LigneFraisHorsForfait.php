@@ -44,7 +44,7 @@ class LigneFraisHorsForfait
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais", inversedBy="lignesFraisHorsForfait", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="AL\GsbBundle\Entity\FicheFrais", inversedBy="lignesFraisHorsForfait")
      * @ORM\JoinColumn(nullable=false)
      * 
      */

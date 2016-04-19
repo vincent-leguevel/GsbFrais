@@ -3,15 +3,23 @@ al_gsb_connexion:
     defaults: { _controller: ALGsbBundle:Connexion:index }
     
 al_gsb_accueil:
-    path:   /accueil
+    path:   /accueil/
     defaults: { _controller: ALGsbBundle:Accueil:index } 
     
 al_gsb_saisir_frais:
-    path:   /saisirFrais
+    path:   /saisirFrais/
     defaults: { _controller: ALGsbBundle:SaisirFrais:index }
 
+al_gsb_saisir_hors_frais:
+    path:   /saisirHorsFrais/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:SaisirFrais:saisirHorsFrais }
+    
+al_gsb_supprimer_hors_frais:
+    path:   /supprimerHorsFrais/{id_ligneFraisHorsForfait}
+    defaults: { _controller: ALGsbBundle:SaisirFrais:supprimerHorsFrais }
+
 al_gsb_creer_frais:
-    path:   /creerFrais
+    path:   /creerFrais/
     defaults: { _controller: ALGsbBundle:SaisirFrais:creerFrais }
     
     
