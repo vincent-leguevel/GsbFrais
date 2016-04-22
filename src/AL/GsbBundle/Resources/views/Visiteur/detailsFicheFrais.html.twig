@@ -1,0 +1,103 @@
+{% extends 'ALGsbBundle::base.html.twig' %}
+
+
+{% block head %}
+    {{ parent() }}
+    <title>GSB | Suivi des Frais</title>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <div class="page-header">
+                    <center><h2>Suivi de vos frais </h2></center>
+                </div>
+                <ol class="breadcrumb">
+                    <li><a href="{{path('al_gsb_deconnexion')}}">déconnexion</a></li>
+                    <li><a href="{{path('al_gsb_accueil')}}">accueil</a></li>
+                    <li><a href="{{path('al_gsb_consulter_frais')}}">suivi de vos frais</a></li>
+                    <li class="active">details fiche frais</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <center>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date de création</th>
+                                <th>Date de modification</th>
+                                <th>Etat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ficheFrais.dateRedac |date("d/m/Y")}}</td>                              
+                                <td>{{ficheFrais.dateModif |date("d/m/Y")}}</td>
+                                <td>{{ficheFrais.etat.libelle }}</td>                       
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    <p>Lignes de frais forfait :  </p>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Libelle</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ligneFraisForfait in ficheFrais.lignesFraisForfait%}
+                                <tr>
+                                    <td>{{ligneFraisForfait.fraisForfait.libelle}}</td>                              
+                                    <td>{{ligneFraisForfait.quantite}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    {% if ficheFrais.lignesFraisHorsForfait is not empty%}
+                        <p>Lignes de frais hors forfait : </p>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Libelle</th>
+                                    <th>Date frais</th>
+                                    <th>Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ligneFraisHorsForfait in ficheFrais.lignesFraisHorsForfait%}
+                                    <tr>
+                                        <td>{{ligneFraisHorsForfait.libelle}}</td>                              
+                                        <td>{{ligneFraisHorsForfait.dateFrais |date("d/m/Y")}}</td>
+                                        <td>{{ligneFraisHorsForfait.montant}}</td>  
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+                            <a href="#" class="alert-link">Vous n'avez pas de frais hors forfait pour cette fiche</a>
+                        </div>
+                    {% endif %}
+                </center>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+{% endblock %}

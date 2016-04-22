@@ -32,6 +32,11 @@ al_gsb_consulter_frais:
     path:   /consulterFrais
     defaults: { _controller: ALGsbBundle:ConsulterFrais:index }
     
+al_gsb_details_frais:
+    path:   /detailsFrais/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:ConsulterFrais:detailsFicheFrais }
+    
+    
 al_gsb_deconnexion:
     path:   /logout
     defaults: { _controller: ALGsbBundle:Deconnexion:index }

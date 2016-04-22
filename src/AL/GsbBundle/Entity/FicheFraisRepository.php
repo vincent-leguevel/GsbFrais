@@ -13,6 +13,9 @@ use Doctrine\ORM\EntityRepository;
 class FicheFraisRepository extends EntityRepository
 {
     
+    /*
+     * Récupère la fiche de frais correspondant au mois ainsi que l'utilisateur fournit en paramètres
+     */
     public function byUserAndDate($date,$user){
         return  $this->createQueryBuilder('u')
                      ->where('u.utilisateur = :user and u.dateRedac like :date')
@@ -20,5 +23,18 @@ class FicheFraisRepository extends EntityRepository
                      ->setParameter('date', $date.'%')
                      ->getQuery()
                      ->getOneOrNullResult();
+    }
+    
+    /**
+     * Récupère uniquement les fiches de frais du mois actuel ainsi que celles du mois précédent 
+     */
+    public function consulterByUserAndDate($user,$date){
+        return  $this->createQueryBuilder('u')
+                     ->where('u.utilisateur = :user and u.dateRedac < :date')
+                     ->orderBy('u.dateRedac ',' DESC')
+                     ->setParameter('user', $user)
+                     ->setParameter('date', $date)
+                     ->getQuery()
+                     ->getResult();
     }
 }

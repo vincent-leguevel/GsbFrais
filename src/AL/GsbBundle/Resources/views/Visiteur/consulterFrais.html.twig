@@ -22,6 +22,41 @@
                 </ol>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <center>
+                    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                    {{form(form)}}
+                    {{ form_end(form) }}
+                    
+                    {% if notFound is defined%}
+                        <div class="alert alert-warning" role="alert">
+                            <a>Vous n'avez pas de fiche de frais à cette periode {{date}}</a>
+                        </div>
+                    {% endif %}
+                </center>
+                <hr>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date de création</th>
+                            <th>Date de modification</th>
+                            <th>Etat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ficheFrais in fichesFrais%}
+                            <tr>
+                                <td>{{ficheFrais.dateRedac |date("d/m/Y")}}</td>                              
+                                <td>{{ficheFrais.dateModif |date("d/m/Y")}}</td>
+                                <td>{{ficheFrais.etat.libelle }}</td>
+                                <td><a class="btn btn-info" href="{{path('al_gsb_details_frais',{'id_ficheFrais': ficheFrais.id})}}" role="button">Détails</a></td>
+                            </tr>
+                        {% endfor%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

@@ -16,7 +16,7 @@ class LigneFraisHorsForfaitType extends AbstractType
     {
         $builder
             ->add('libelle')
-            ->add('dateFrais','date',array('years'=>range(date('Y'),date('Y')),'months'=>range(date('m'),date('m'))))
+            ->add('dateFrais','date',array('years'=>range(date('Y'),date('Y')),'months'=>range(date('m'),date('m')),'days'=>range(date('d')-date('d')+1,date('d'))))
             ->add('montant')
         ;
     }
