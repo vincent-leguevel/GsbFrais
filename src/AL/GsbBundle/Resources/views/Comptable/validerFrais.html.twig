@@ -1,0 +1,88 @@
+{% extends 'ALGsbBundle::base.html.twig' %}
+
+
+{% block head %}
+    {{ parent() }}
+    <title>GSB | Valider frais</title>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <div class="page-header">
+                    <center><h2>Valider les fiches de frais </h2></center>
+                </div>
+                <ol class="breadcrumb">
+                    <li><a href="{{path('al_gsb_deconnexion')}}">déconnexion</a></li>
+                    <li><a href="{{path('al_gsb_accueil')}}">accueil</a></li>
+                        {% if choix is defined%}
+                        <li class="active">valider fiches frais</li>
+                        {% endif %}                    
+                        {% if details is defined%}
+                        <li><a href="{{path('al_gsb_valider_frais')}}">valider fiches frais</a></li>
+                        <li class="active">details fiches frais</li>
+                        {% endif %}
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8  col-lg-offset-2">
+                <center>
+                    {% if choix is defined%}
+                        {% if notFound is defined %}
+                            <div class="alert alert-warning" role="alert">Pas de fiche de frais à cette date et pour cet utilisateur</div>
+                        {% endif %}
+
+                        {{form(form)}}                        
+                    {%endif%}
+
+                    {% if details is defined%}
+                        <div class="alert alert-info" role="alert">
+                            Fiche de frais de {{ficheFrais.utilisateur.prenom}} {{ficheFrais.utilisateur.nom}} créé le {{ficheFrais.dateRedac | date('d/m/Y')}} | Dernière modification le {{ficheFrais.dateModif | date('d/m/Y')}}
+                        </div>
+                        <div class="alert alert-success" role="alert">
+                            <a href="{{path('al_gsb_valider_frais')}}">Valider la fiches frais</a></div>
+                            {{form(form)}}
+                        <hr>
+                        {% if lignesFraisHorsForfait is empty%}
+                            <div class="alert alert-warning" role="alert">
+                                <a>Pas de frais hors forfait pour cette fiche.</a>
+                            </div>
+
+                        {%else%}
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Libelle</th>
+                                        <th>Date frais</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ligneFraisHorsForfait in lignesFraisHorsForfait%}
+                                        <tr>
+                                            <td>{{ligneFraisHorsForfait.libelle}}</td>
+                                            <td>{{ligneFraisHorsForfait.dateFrais |date("d/m/Y")}}</td>
+                                            <td>{{ligneFraisHorsForfait.montant}}</td>
+                                            <td><a class="btn btn-warning" href="" role="button">Reporter</a></p></td>
+                                            <td><a class="btn btn-danger" href="{{path('al_gsb_comptable_supprimer_hors_forfait',{'id_horsForfait':ligneFraisHorsForfait.id,'id_ficheFrais': ficheFrais.id})}}" role="button">Refuser</a></p></td>
+                                        </tr>
+                                    {% endfor%}
+                                </tbody>
+                            </table>
+
+                        {%endif%}
+                    {% endif %}
+                </center>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+{% endblock %}

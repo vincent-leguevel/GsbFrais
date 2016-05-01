@@ -348,4 +348,8 @@ class Utilisateur
     {
         return $this->fichesFrais;
     }
+    
+    public function __toString() {
+        return "$this->prenom $this->nom";
+    }
 }

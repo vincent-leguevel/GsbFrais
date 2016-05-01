@@ -120,7 +120,7 @@ class SaisirFraisController extends Controller {
         
         $em = $this->getDoctrine()->getManager();
 
-        $user = $em->getRepository("ALGsbBundle:Utilisateur")->find(2);
+        $user = $em->getRepository("ALGsbBundle:Utilisateur")->find($_SESSION['visiteur']->getId());
         $date = date('Y') . "-" . date('m') . "-" . date('d');
 
         $ficheFrais = new \AL\GsbBundle\Entity\FicheFrais();

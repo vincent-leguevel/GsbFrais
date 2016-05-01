@@ -31,8 +31,9 @@
                             {{form(form)}}
                             <hr>
                             {% if lignesFraisHorsForfait is empty%}
-                                <h4>Vous n'avez pas de hors forfait pour le mois en cours.</h4>
-
+                                <div class="alert alert-warning" role="alert">
+                                    <a>Vous n'avez pas de hors forfait pour le mois en cours.</a>
+                                </div>
                             {%else%}
                                 <table class="table table-hover">
                                     <thead>

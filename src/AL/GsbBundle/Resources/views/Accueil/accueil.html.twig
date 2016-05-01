@@ -26,8 +26,8 @@
                                 <a class="btn btn-info" href="{{path('al_gsb_saisir_frais')}}" role="button">Gérer vos frais</a>
                                 <a class="btn btn-info" href="{{path('al_gsb_consulter_frais')}}" role="button">suivre vos frais</a>
                             {% elseif comptable is defined %}
-                                <a class="btn btn-info" href="" role="button">Valider les frais</a>
-                                <a class="btn btn-info" href="" role="button">suivre le paiement des frais</a>
+                                <a class="btn btn-info" href="{{path('al_gsb_valider_frais')}}" role="button">Valider les frais</a>
+                                <a class="btn btn-info" href="{{path('al_gsb_suivre_paiement_frais')}}" role="button">suivre le paiement des frais</a>
                             {% endif %}
                         </center>
                     </div>

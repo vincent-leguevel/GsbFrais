@@ -15,23 +15,34 @@ class ConsulterFraisController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('ALGsbBundle:Utilisateur')->find($_SESSION['visiteur']->getId());
 
-        // variable permettant de limiter la recherche des fiches de frais notament les hors forfait eporté par les comptables
-        $date = date('Y') . "-" . (date('m') + 1) . "-01";
+        // variable permettant de limiter la recherche des fiches de frais notament les hors forfait reporté par les comptables
+        $date = date('Y') . "-" . (date('m')) . "-31";
         $fichesFrais = $em->getRepository('ALGsbBundle:FicheFrais')->consulterByUserAndDate($user, $date);
 
+        $mois = range(1, 31);
+        $annee = range(date('Y') - 4, date('Y'));
         $form = $this->createFormBuilder()
                 ->add('Mois', 'choice', array(
-                    'choices' => array('Mois' => array(range(1, 31), range(1, 31)))))
+                    'choices' => $mois))
                 ->add('Annee', 'choice', array(
-                    'choices' => array('annee' => range(date('Y') - 4, date('Y')))))
+                    'choices' => $annee))
                 ->add('Valider', 'submit')
                 ->getForm();
         $form->handleRequest($this->get('request'));
         if ($form->isValid()) {
             $formData = $form->getData();
-            $date = $formData['Annee'] . "-" . $formData['Mois'];
 
-            $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byUserAndDate($date, $user);
+            if ($mois[$formData['Mois']] < 10) {
+                $moisDate = "0" . $mois[$formData['Mois']];
+            }
+            $date = $annee[$formData['Annee']] . "-" . $moisDate;
+            $dateActuelle = date('Y') . "-" . date('m');
+
+            $ficheFrais = null;
+            if ($date <= $dateActuelle) {
+                $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byUserAndDate($date, $user);
+            }
+            
             if ($ficheFrais != null) {
                 return $this->redirectToRoute('al_gsb_details_frais', array('id_ficheFrais' => $ficheFrais->getId()));
             } else {

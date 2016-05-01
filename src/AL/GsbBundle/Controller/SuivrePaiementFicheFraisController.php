@@ -1,18 +1,17 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AL\GsbBundle\Controller;
 
-/**
- * Description of SuivrePaiementFicheFraisController
- *
- * @author eleve
- */
-class SuivrePaiementFicheFraisController {
-    //put your code here
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+class SuivrePaiementFicheFraisController extends Controller {
+
+    public function indexAction() {
+
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
+        
+        return $this->render("ALGsbBundle:Comptable:suivrePaiementFrais.html.twig");
+    }
 }

@@ -5,6 +5,7 @@ al_gsb_connexion:
 al_gsb_accueil:
     path:   /accueil/
     defaults: { _controller: ALGsbBundle:Accueil:index } 
+
     
 al_gsb_saisir_frais:
     path:   /saisirFrais/
@@ -22,12 +23,6 @@ al_gsb_creer_frais:
     path:   /creerFrais/
     defaults: { _controller: ALGsbBundle:SaisirFrais:creerFrais }
     
-    
-    
-    
-    
-    
-    
 al_gsb_consulter_frais:
     path:   /consulterFrais
     defaults: { _controller: ALGsbBundle:ConsulterFrais:index }
@@ -35,6 +30,25 @@ al_gsb_consulter_frais:
 al_gsb_details_frais:
     path:   /detailsFrais/{id_ficheFrais}
     defaults: { _controller: ALGsbBundle:ConsulterFrais:detailsFicheFrais }
+    
+ 
+ 
+al_gsb_suivre_paiement_frais:
+    path:   /suivrePaiementFrais/
+    defaults: { _controller: ALGsbBundle:SuivrePaiementFicheFrais:index }
+
+al_gsb_valider_frais:
+    path:   /validerFrais/
+    defaults: { _controller: ALGsbBundle:ValiderFrais:index }
+
+al_gsb_valider_frais_details:
+    path:   /validerFraisDetails/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:ValiderFrais:details }
+
+al_gsb_comptable_supprimer_hors_forfait:
+    path:   /invaliderHorsForfait/{id_horsForfait}/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:ValiderFrais:supprimerHorsForfait }
+
     
     
 al_gsb_deconnexion:
