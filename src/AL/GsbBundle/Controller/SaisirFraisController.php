@@ -17,6 +17,7 @@ class SaisirFraisController extends Controller {
         $ficheFrais = $this->getDoctrine()->getManager()->getRepository("ALGsbBundle:FicheFrais")->byUserAndDate(date("Y") . "-" . date("m"), $user);
 
         if ($ficheFrais != null) {
+
             $form = $this->buildForm($ficheFrais);
 
             $form->handleRequest($this->get('request'));
@@ -76,7 +77,15 @@ class SaisirFraisController extends Controller {
             $fichesFraisHorsForfait = $em->getRepository('ALGsbBundle:LigneFraisHorsForfait')->findBy(array('ficheFrais'=>$ficheFrais));
             return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('saisir' => true, 'form' => $form->createView(), 'ficheFrais' => $ficheFrais,'mois' => $this->getMoisByID(date('m')),'lignesFraisHorsForfait'=>$fichesFraisHorsForfait));
         } else {
-            return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('creerFiche' => true, 'mois' => $this->getMoisByID(date('m'))));
+            //Comme la fiche du mois courant n'existe pas (ficheFrais == null) on clôture la fiche du mois précédent si elle existe
+            $ficheFrais = $this->getDoctrine()->getManager()->getRepository("ALGsbBundle:FicheFrais")->byUserAndDate(date("Y") . "-%" . (date("m")-1), $user);
+            if($ficheFrais != null){
+                $etat = $em->getRepository("ALGsbBundle:Etat")->find(2);
+                $ficheFrais->setEtat($etat);
+                $em->persist($ficheFrais);
+                $em->flush();
+            }
+            return $this->render('ALGsbBundle:Visiteur:saisirFrais.html.twig', array('creerFiche' => true, 'mois' => $this->getMoisByID(date("m"))));
         }
     }
     
@@ -103,6 +112,11 @@ class SaisirFraisController extends Controller {
     }
     
     public function supprimerHorsFraisAction($id_ligneFraisHorsForfait){
+        
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
+        
         $em = $this->getDoctrine()->getManager();
         $ligneFraisHorsForfait = $em->getRepository('ALGsbBundle:LigneFraisHorsForfait')->find($id_ligneFraisHorsForfait);
         
@@ -159,7 +173,7 @@ class SaisirFraisController extends Controller {
                 if ($fraisForfait->getId() == 1) {
                     $form->add('etape', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
                 } elseif ($fraisForfait->getId() == 2) {
-                    $form->add('km', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                    $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite(),'precision' => '2'));
                 } elseif ($fraisForfait->getId() == 3) {
                     $form->add('nuitees', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
                 } elseif ($fraisForfait->getId() == 4) {

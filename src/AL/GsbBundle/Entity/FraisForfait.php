@@ -29,14 +29,13 @@ class FraisForfait
     private $libelle;
 
     /**
-     * @var string
+     * @var decimal
      *
      * @ORM\Column(name="montant", type="decimal",precision=10, scale=2)
      */
     private $montant;
-
-
-
+    
+    
     /**
      * Get id
      *

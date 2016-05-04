@@ -24,7 +24,7 @@ class LigneFraisForfait
     /**
      * @var integer
      *
-     * @ORM\Column(name="quantite", type="integer")
+     * @ORM\Column(name="quantite", type="decimal",precision=10, scale=2)
      */
     private $quantite;
 
@@ -42,8 +42,6 @@ class LigneFraisForfait
     private $fraisForfait;
 
 
-
-
     /**
      * Get id
      *
@@ -57,7 +55,7 @@ class LigneFraisForfait
     /**
      * Set quantite
      *
-     * @param integer $quantite
+     * @param string $quantite
      * @return LigneFraisForfait
      */
     public function setQuantite($quantite)
@@ -70,7 +68,7 @@ class LigneFraisForfait
     /**
      * Get quantite
      *
-     * @return integer 
+     * @return string 
      */
     public function getQuantite()
     {

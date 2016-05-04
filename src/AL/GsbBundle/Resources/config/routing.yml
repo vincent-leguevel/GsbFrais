@@ -45,6 +45,14 @@ al_gsb_valider_frais_details:
     path:   /validerFraisDetails/{id_ficheFrais}
     defaults: { _controller: ALGsbBundle:ValiderFrais:details }
 
+al_gsb_valider_frais_etat:
+    path:   /etatValider/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:ValiderFrais:etatValider }
+
+al_gsb_comptable_reporter_hors_forfait:
+    path:   /reporterHorsForfait/{id_horsForfait}/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:ValiderFrais:reporterHorsForfait }
+
 al_gsb_comptable_supprimer_hors_forfait:
     path:   /invaliderHorsForfait/{id_horsForfait}/{id_ficheFrais}
     defaults: { _controller: ALGsbBundle:ValiderFrais:supprimerHorsForfait }

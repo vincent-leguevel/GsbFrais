@@ -53,6 +53,10 @@ class ConsulterFraisController extends Controller {
     }
 
     public function detailsFicheFraisAction($id_ficheFrais) {
+        
+        if (!isset($_SESSION["visiteur"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
 
         $ficheFrais = $this->getDoctrine()->getManager()->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
 

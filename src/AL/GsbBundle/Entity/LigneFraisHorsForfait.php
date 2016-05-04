@@ -22,7 +22,7 @@ class LigneFraisHorsForfait
     private $id;
 
     /**
-     * @var string
+     * @var decimal
      *
      * @ORM\Column(name="libelle", type="string", length=25)
      */
@@ -51,8 +51,6 @@ class LigneFraisHorsForfait
     
     private $ficheFrais;
     
-
-
 
     /**
      * Get id

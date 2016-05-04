@@ -36,7 +36,7 @@ class FicheFrais
     private $nbJustificatifs;
 
     /**
-     * @var string
+     * @var decimal
      *
      * @ORM\Column(name="montantValide", type="decimal",precision=10, scale=2)
      */
@@ -77,6 +77,7 @@ class FicheFrais
   
     
  
+   
     /**
      * Constructor
      */
@@ -217,7 +218,7 @@ class FicheFrais
      * @param \AL\GsbBundle\Entity\Utilisateur $utilisateur
      * @return FicheFrais
      */
-    public function setUtilisateur(\AL\GsbBundle\Entity\Utilisateur $utilisateur = null)
+    public function setUtilisateur(\AL\GsbBundle\Entity\Utilisateur $utilisateur)
     {
         $this->utilisateur = $utilisateur;
 

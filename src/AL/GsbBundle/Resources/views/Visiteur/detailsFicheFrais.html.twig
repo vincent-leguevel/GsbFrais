@@ -36,30 +36,43 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ficheFrais.dateRedac |date("d/m/Y")}}</td>                              
+                                <td>{{ficheFrais.dateRedac |date("d/m/Y")}}</td>
                                 <td>{{ficheFrais.dateModif |date("d/m/Y")}}</td>
-                                <td>{{ficheFrais.etat.libelle }}</td>                       
+                                <td>{{ficheFrais.etat.libelle }}</td>
                             </tr>
                         </tbody>
                     </table>
-
                     <hr>
-
+                    <p>Montant validé</p>
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td>Montant validé</td>
+                                <td>{{ficheFrais.montantValide}}€</td>
+                            </tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
                     <p>Lignes de frais forfait :  </p>
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Libelle</th>
-                                <th>Montant</th>
+                                <th>Quantité</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for ligneFraisForfait in ficheFrais.lignesFraisForfait%}
                                 <tr>
-                                    <td>{{ligneFraisForfait.fraisForfait.libelle}}</td>                              
+                                    <td>{{ligneFraisForfait.fraisForfait.libelle}}</td>
                                     <td>{{ligneFraisForfait.quantite}}</td>
                                 </tr>
                             {% endfor %}
+                            <tr>
+                                <td>Nombre de justificatif</td>
+                                <td>{{ficheFrais.nbJustificatifs}}</td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -78,9 +91,9 @@
                             <tbody>
                                 {% for ligneFraisHorsForfait in ficheFrais.lignesFraisHorsForfait%}
                                     <tr>
-                                        <td>{{ligneFraisHorsForfait.libelle}}</td>                              
+                                        <td>{{ligneFraisHorsForfait.libelle}}</td>
                                         <td>{{ligneFraisHorsForfait.dateFrais |date("d/m/Y")}}</td>
-                                        <td>{{ligneFraisHorsForfait.montant}}</td>  
+                                        <td>{{ligneFraisHorsForfait.montant}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

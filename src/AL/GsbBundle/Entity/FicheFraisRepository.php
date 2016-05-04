@@ -51,5 +51,19 @@ class FicheFraisRepository extends EntityRepository {
                         ->getQuery()
                         ->getOneOrNullResult();
     }
+    
+    /**
+     * Recupere toutes les fiches de frais en fonction de l'état 
+     */
+    
+    public function byEtat($etat){
+        
+        return $this->createQueryBuilder('u')
+                        ->where('u.etat = :etat')
+                        ->orderBy('u.dateRedac ', ' ASC')
+                        ->setParameter('etat', $etat)
+                        ->getQuery()
+                        ->getResult();
+    }
 
 }

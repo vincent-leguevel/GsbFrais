@@ -18,63 +18,45 @@
                 <ol class="breadcrumb">
                     <li><a href="{{path('al_gsb_deconnexion')}}">déconnexion</a></li>
                     <li><a href="{{path('al_gsb_accueil')}}">accueil</a></li>
-                        {% if choix is defined%}
-                        <li class="active">valider fiches frais</li>
-                        {% endif %}                    
-                        {% if details is defined%}
-                        <li><a href="{{path('al_gsb_valider_frais')}}">valider fiches frais</a></li>
-                        <li class="active">details fiches frais</li>
-                        {% endif %}
+                    <li class="active">valider fiches frais</li>
                 </ol>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-8  col-lg-offset-2">
                 <center>
-                    {% if choix is defined%}
+                    {% if fichesFrais is not empty %}
                         {% if notFound is defined %}
                             <div class="alert alert-warning" role="alert">Pas de fiche de frais à cette date et pour cet utilisateur</div>
                         {% endif %}
 
+
                         {{form(form)}}                        
-                    {%endif%}
-
-                    {% if details is defined%}
-                        <div class="alert alert-info" role="alert">
-                            Fiche de frais de {{ficheFrais.utilisateur.prenom}} {{ficheFrais.utilisateur.nom}} créé le {{ficheFrais.dateRedac | date('d/m/Y')}} | Dernière modification le {{ficheFrais.dateModif | date('d/m/Y')}}
-                        </div>
-                        <div class="alert alert-success" role="alert">
-                            <a href="{{path('al_gsb_valider_frais')}}">Valider la fiches frais</a></div>
-                            {{form(form)}}
                         <hr>
-                        {% if lignesFraisHorsForfait is empty%}
-                            <div class="alert alert-warning" role="alert">
-                                <a>Pas de frais hors forfait pour cette fiche.</a>
-                            </div>
-
-                        {%else%}
-                            <table class="table table-hover">
-                                <thead>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prenom</th>
+                                    <th>Date rédaction</th>
+                                    <th>Date de modification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ficheFrais in fichesFrais%}
                                     <tr>
-                                        <th>Libelle</th>
-                                        <th>Date frais</th>
-                                        <th>Montant</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for ligneFraisHorsForfait in lignesFraisHorsForfait%}
-                                        <tr>
-                                            <td>{{ligneFraisHorsForfait.libelle}}</td>
-                                            <td>{{ligneFraisHorsForfait.dateFrais |date("d/m/Y")}}</td>
-                                            <td>{{ligneFraisHorsForfait.montant}}</td>
-                                            <td><a class="btn btn-warning" href="" role="button">Reporter</a></p></td>
-                                            <td><a class="btn btn-danger" href="{{path('al_gsb_comptable_supprimer_hors_forfait',{'id_horsForfait':ligneFraisHorsForfait.id,'id_ficheFrais': ficheFrais.id})}}" role="button">Refuser</a></p></td>
-                                        </tr>
-                                    {% endfor%}
-                                </tbody>
-                            </table>
+                                        <td>{{ficheFrais.utilisateur.nom}}</td>
+                                        <td>{{ficheFrais.utilisateur.prenom}}</td>
+                                        <td>{{ficheFrais.dateRedac |date("d/m/Y")}}</td>
+                                        <td>{{ficheFrais.dateModif |date("d/m/Y")}}</td>
 
-                        {%endif%}
+                                        <td><a class="btn btn-info" href="{{path('al_gsb_valider_frais_details',{'id_ficheFrais': ficheFrais.id })}}" role="button">Details</a></p></td>
+                                    </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                            {%else%}
+                                <div class="alert alert-warning" role="alert">Pas de fiche de frais à valider</div>
                     {% endif %}
                 </center>
             </div>

@@ -44,13 +44,20 @@ class ValiderFraisController extends Controller {
 
                 return $this->redirectToRoute('al_gsb_valider_frais_details', array('id_ficheFrais' => $ficheFrais->getId()));
             } else {
-                return $this->render("ALGsbBundle:Comptable:validerFrais.html.twig", array('utilisateurs' => $utilisateurs, 'form' => $form->createView(), 'choix' => true, 'notFound' => true, 'user' => $user, 'date' => $date, 'etat' => $etat));
+                return $this->render("ALGsbBundle:Comptable:validerFrais.html.twig", array('form' => $form->createView(), 'fichesFrais' => $this->getAllValidateFiches(), 'notFound' => true));
             }
         }
-        return $this->render("ALGsbBundle:Comptable:validerFrais.html.twig", array('utilisateurs' => $utilisateurs, 'form' => $form->createView(), 'choix' => true));
+        $etat = $em->getRepository('ALGsbBundle:Etat')->find(2);
+        $fichesFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byEtat($etat);
+        return $this->render("ALGsbBundle:Comptable:validerFrais.html.twig", array('form' => $form->createView(), 'fichesFrais' => $this->getAllValidateFiches()));
     }
 
     public function detailsAction($id_ficheFrais) {
+
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
+
         $em = $this->getDoctrine()->getManager();
         $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
 
@@ -73,26 +80,84 @@ class ValiderFraisController extends Controller {
                 }
                 $em->persist($ligneFraisForfait);
                 $ficheFrais->setNbJustificatifs($formData['nbJustificatifs']);
-                $ficheFrais->setDateModif(new \DateTime(date('Y') . "-" . date('m') . "-" . date('d')));
+                $ficheFrais->setDateModif($this->buildDate());
                 $ficheFrais->setMontantValide($formData['montantValide']);
                 $em->persist($ficheFrais);
                 $em->flush();
             }
             return $this->redirectToRoute('al_gsb_valider_frais_details', array('id_ficheFrais' => $ficheFrais->getId()));
         }
-        return $this->render("ALGsbBundle:Comptable:validerFrais.html.twig", array('details' => true, 'form' => $form->createView(), 'ficheFrais' => $ficheFrais, 'lignesFraisHorsForfait' => $ficheFrais->getLignesFraisHorsForfait()));
+        return $this->render("ALGsbBundle:Comptable:detailsValiderFrais.html.twig", array('form' => $form->createView(), 'ficheFrais' => $ficheFrais));
     }
 
-    public function supprimerHorsForfaitAction($id_horsForfait,$id_ficheFrais) {
+    public function etatValiderAction($id_ficheFrais) {
+
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
+
         $em = $this->getDoctrine()->getManager();
+        $etat = $em->getRepository('ALGsbBundle:Etat')->find(4);
+        $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
+        $ficheFrais->setEtat($etat);
+        $ficheFrais->setDateModif($this->buildDate());
+        $em->persist($ficheFrais);
+        $em->flush();
+
+        return $this->redirectToRoute('al_gsb_valider_frais');
+    }
+
+    public function reporterHorsForfaitAction($id_horsForfait, $id_ficheFrais) {
+
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
         
+        $em = $this->getDoctrine()->getManager();
+        $fraisHorsForfait = $em->getRepository('ALGsbBundle:LigneFraisHorsForfait')->find($id_horsForfait);
+        $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
+
+        //date de redaction de la fiche actuelle + 1 mois 
+        $date = new \DateTime();
+        $date = $ficheFrais->getDateRedac();
+        $date->add(new \DateInterval('P1M'));
+        
+        $ficheFraisSuivant = $em->getRepository('ALGsbBundle:FicheFrais')->byUserAndDate(date_format($date, 'Y-m'),$ficheFrais->getUtilisateur());
+
+        if ($ficheFraisSuivant != null) {
+            $fraisHorsForfait->setFicheFrais($ficheFraisSuivant);
+            $em->persist($fraisHorsForfait);
+            
+            $ficheFrais->setDateModif($this->buildDate());
+            $em->persist($ficheFrais);
+            
+            $ficheFraisSuivant->setDateModif($this->buildDate());
+            $em->persist($ficheFraisSuivant);
+            
+            $em->flush();
+            return $this->redirectToRoute('al_gsb_valider_frais_details', array('id_ficheFrais' => $ficheFrais->getId()));
+        } else {
+            
+            // à completer
+            return $this->redirectToRoute('al_gsb_valider_frais');
+        }
+    }
+
+    public function supprimerHorsForfaitAction($id_horsForfait, $id_ficheFrais) {
+
+        if (!isset($_SESSION["comptable"])) {
+            return $this->redirectToRoute('al_gsb_connexion');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
         $ficheFraisHorsForfait = $em->getRepository('ALGsbBundle:LigneFraisHorsForfait')->find($id_horsForfait);
         $ficheFraisHorsForfait->setLibelle('REFUSE : ' . $ficheFraisHorsForfait->getLibelle());
         $em->persist($ficheFraisHorsForfait);
-        
-        
+
+
         $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
-        $ficheFrais->setDateModif(new \DateTime(date('Y') . "-" . date('m') . "-" . date('d')));
+        $ficheFrais->setDateModif($this->buildDate());
         $em->persist($ficheFrais);
         $em->flush();
         return $this->redirectToRoute('al_gsb_valider_frais_details', array('id_ficheFrais' => $ficheFrais->getId()));
@@ -108,7 +173,7 @@ class ValiderFraisController extends Controller {
             if ($fraisForfait->getId() == 1) {
                 $form->add('etape', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
             } elseif ($fraisForfait->getId() == 2) {
-                $form->add('km', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
+                $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite(), 'precision' => '2'));
             } elseif ($fraisForfait->getId() == 3) {
                 $form->add('nuitees', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
             } elseif ($fraisForfait->getId() == 4) {
@@ -116,9 +181,22 @@ class ValiderFraisController extends Controller {
             }
         }
         $form->add('nbJustificatifs', 'integer', array('data' => $ficheFrais->getNbJustificatifs()));
-        $form->add('montantValide', 'integer', array('data' => $ficheFrais->getMontantValide()));
+        $form->add('montantValide', 'number', array('data' => $ficheFrais->getMontantValide(), 'precision' => '2'));
         $form->add('Valider', 'submit');
         return $form->getForm();
+    }
+
+    private function buildDate() {
+        
+            return new \DateTime(date('Y') . "-" . date('m') . "-" . date('d'));
+    }
+
+    private function getAllValidateFiches() {
+
+        $em = $this->getDoctrine()->getManager();
+        $etat = $em->getRepository('ALGsbBundle:Etat')->find(2);
+        $fichesFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byEtat($etat);
+        return $fichesFrais;
     }
 
 }
