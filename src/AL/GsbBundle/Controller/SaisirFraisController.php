@@ -113,7 +113,7 @@ class SaisirFraisController extends Controller {
     
     public function supprimerHorsFraisAction($id_ligneFraisHorsForfait){
         
-        if (!isset($_SESSION["comptable"])) {
+        if (!isset($_SESSION["visiteur"])) {
             return $this->redirectToRoute('al_gsb_connexion');
         }
         

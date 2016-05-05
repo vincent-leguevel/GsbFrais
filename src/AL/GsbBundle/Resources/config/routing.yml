@@ -57,6 +57,13 @@ al_gsb_comptable_supprimer_hors_forfait:
     path:   /invaliderHorsForfait/{id_horsForfait}/{id_ficheFrais}
     defaults: { _controller: ALGsbBundle:ValiderFrais:supprimerHorsForfait }
 
+al_gsb_comptable_modifier_etat_forfait:
+    path:   /modifierEtatFicheFrais/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:SuivrePaiementFicheFrais:modifierEtatFiche }
+    
+al_gsb_comptable_details_fiche_frais:
+    path:   /detailsFraisVisiteur/{id_ficheFrais}
+    defaults: { _controller: ALGsbBundle:SuivrePaiementFicheFrais:detailsFicheFrais }
     
     
 al_gsb_deconnexion:

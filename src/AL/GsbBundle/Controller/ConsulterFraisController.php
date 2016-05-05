@@ -51,7 +51,11 @@ class ConsulterFraisController extends Controller {
         }
         return $this->render("ALGsbBundle:Visiteur:consulterFrais.html.twig", array('fichesFrais' => $fichesFrais, 'date' => $date, 'form' => $form->createView()));
     }
-
+    /**
+     * 
+     * @param type $id_ficheFrais
+     * @return type
+     */
     public function detailsFicheFraisAction($id_ficheFrais) {
         
         if (!isset($_SESSION["visiteur"])) {
@@ -60,6 +64,7 @@ class ConsulterFraisController extends Controller {
 
         $ficheFrais = $this->getDoctrine()->getManager()->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
 
+        
         return $this->render("ALGsbBundle:Visiteur:detailsFicheFrais.html.twig", array('ficheFrais' => $ficheFrais));
     }
 

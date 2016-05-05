@@ -11,10 +11,16 @@ use Doctrine\ORM\EntityRepository;
  * repository methods below.
  */
 class FicheFraisRepository extends EntityRepository {
-    /*
+
+    
+    /**
+     * 
+     * @param type $date
+     * @param type $user
+     * @return type
+     * 
      * Récupère la fiche de frais correspondant à la date ainsi que l'utilisateur
      */
-
     public function byUserAndDate($date, $user) {
         return $this->createQueryBuilder('u')
                         ->where('u.utilisateur = :user and u.dateRedac like :date')
@@ -24,7 +30,13 @@ class FicheFraisRepository extends EntityRepository {
                         ->getOneOrNullResult();
     }
 
+    
     /**
+     * 
+     * @param type $user
+     * @param type $date
+     * @return type
+     * 
      * Récupère uniquement les fiches de frais du mois actuel ainsi que celles du mois précédent 
      */
     public function consulterByUserAndDate($user, $date) {
@@ -37,7 +49,14 @@ class FicheFraisRepository extends EntityRepository {
                         ->getResult();
     }
 
+
     /**
+     * 
+     * @param type $user
+     * @param type $date
+     * @param type $etat
+     * @return type
+     * 
      * Récupère une fiche de frais en fonction de l'utilisateur de la date ainsi que de l'etat actuel de la fiche
      */
     public function byUserDateEtat($user, $date, $etat) {
@@ -47,21 +66,69 @@ class FicheFraisRepository extends EntityRepository {
                         ->setParameter('user', $user)
                         ->setParameter('date', $date . '%')
                         ->setParameter('etat', $etat)
-                        ->setParameter('dateRedac', date('Y').'-'.date('m').'-31')
+                        ->setParameter('dateRedac', date('Y') . '-' . date('m') . '-31')
                         ->getQuery()
                         ->getOneOrNullResult();
     }
+
     
     /**
+     * 
+     * @param type $etat
+     * @return type
+     * 
      * Recupere toutes les fiches de frais en fonction de l'état 
      */
-    
-    public function byEtat($etat){
-        
+    public function byEtat($etat) {
+
         return $this->createQueryBuilder('u')
                         ->where('u.etat = :etat')
                         ->orderBy('u.dateRedac ', ' ASC')
                         ->setParameter('etat', $etat)
+                        ->getQuery()
+                        ->getResult();
+    }
+
+
+    /**
+     * 
+     * @param type $validee
+     * @param type $miseEnPaiement
+     * @param type $remboursee
+     * @return type
+     * 
+     * Recupere toutes les fiches de frais dans un état validée, mise en paiement et remboursée
+     */
+    public function byEtatValidee($validee, $miseEnPaiement, $remboursee) {
+
+        return $this->createQueryBuilder('u')
+                        ->where('u.etat  = :validee OR u.etat = :miseEnPaiement OR u.etat = :remboursee')
+                        ->orderBy('u.etat', ' ASC')
+                        ->setParameter('validee', $validee)
+                        ->setParameter('miseEnPaiement', $miseEnPaiement)
+                        ->setParameter('remboursee', $remboursee)
+                        ->getQuery()
+                        ->getResult();
+    }
+
+    
+    /**
+     * 
+     * @param type $validee
+     * @param type $miseEnPaiement
+     * @param type $remboursee
+     * @param type $user
+     * @return type
+     */
+    public function byEtatValideeAndUser($validee, $miseEnPaiement, $remboursee, $user) {
+
+        return $this->createQueryBuilder('u')
+                        ->where('u.etat  = :validee OR u.etat = :miseEnPaiement OR u.etat = :remboursee And u.utilisateur = :user')
+                        ->orderBy('u.etat', ' ASC')
+                        ->setParameter('validee', $validee)
+                        ->setParameter('miseEnPaiement', $miseEnPaiement)
+                        ->setParameter('remboursee', $remboursee)
+                        ->setParameter('user', $user)
                         ->getQuery()
                         ->getResult();
     }
