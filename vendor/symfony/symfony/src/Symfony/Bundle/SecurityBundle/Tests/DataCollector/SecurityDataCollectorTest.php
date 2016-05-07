@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Bundle\SecurityBundle\Tests\DataCollector;
 
 use Symfony\Bundle\SecurityBundle\DataCollector\SecurityDataCollector;
@@ -45,8 +54,6 @@ class SecurityDataCollectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testLegacyCollectWhenAuthenticationTokenIsNull()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $tokenStorage = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
         $collector = new SecurityDataCollector($tokenStorage, $this->getRoleHierarchy());
         $collector->collect($this->getRequest(), $this->getResponse());

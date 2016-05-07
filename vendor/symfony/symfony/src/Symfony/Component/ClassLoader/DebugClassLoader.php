@@ -11,7 +11,7 @@
 
 namespace Symfony\Component\ClassLoader;
 
-trigger_error('The '.__NAMESPACE__.'\DebugClassLoader class is deprecated since version 2.4 and will be removed in 3.0. Use the Symfony\Component\Debug\DebugClassLoader class instead.', E_USER_DEPRECATED);
+@trigger_error('The '.__NAMESPACE__.'\DebugClassLoader class is deprecated since version 2.4 and will be removed in 3.0. Use the Symfony\Component\Debug\DebugClassLoader class instead.', E_USER_DEPRECATED);
 
 /**
  * Autoloader checking if the class is really defined in the file found.
@@ -22,8 +22,6 @@ trigger_error('The '.__NAMESPACE__.'\DebugClassLoader class is deprecated since 
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Christophe Coevoet <stof@notk.org>
- *
- * @api
  *
  * @deprecated since version 2.4, to be removed in 3.0.
  *             Use {@link \Symfony\Component\Debug\DebugClassLoader} instead.
@@ -36,8 +34,6 @@ class DebugClassLoader
      * Constructor.
      *
      * @param object $classFinder
-     *
-     * @api
      */
     public function __construct($classFinder)
     {

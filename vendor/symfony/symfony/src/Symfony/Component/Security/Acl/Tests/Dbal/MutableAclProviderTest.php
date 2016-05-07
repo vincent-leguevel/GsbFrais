@@ -27,6 +27,9 @@ use Symfony\Component\Security\Acl\Dbal\Schema;
 use Doctrine\DBAL\DriverManager;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
+/**
+ * @requires extension pdo_sqlite
+ */
 class MutableAclProviderTest extends \PHPUnit_Framework_TestCase
 {
     protected $con;
@@ -88,7 +91,7 @@ class MutableAclProviderTest extends \PHPUnit_Framework_TestCase
         try {
             $provider->findAcl($oid);
             $this->fail('ACL has not been properly deleted.');
-        } catch (AclNotFoundException $notFound) {
+        } catch (AclNotFoundException $e) {
         }
     }
 
@@ -104,7 +107,7 @@ class MutableAclProviderTest extends \PHPUnit_Framework_TestCase
         try {
             $provider->findAcl(new ObjectIdentity(1, 'Foo'));
             $this->fail('Child-ACLs have not been deleted.');
-        } catch (AclNotFoundException $notFound) {
+        } catch (AclNotFoundException $e) {
         }
     }
 
@@ -290,7 +293,7 @@ class MutableAclProviderTest extends \PHPUnit_Framework_TestCase
         try {
             $provider->updateAcl($acl1);
             $this->fail('Provider failed to detect a concurrent modification.');
-        } catch (ConcurrentModificationException $ex) {
+        } catch (ConcurrentModificationException $e) {
         }
     }
 
@@ -513,10 +516,6 @@ class MutableAclProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!class_exists('PDO') || !in_array('sqlite', \PDO::getAvailableDrivers())) {
-            self::markTestSkipped('This test requires SQLite support in your environment');
-        }
-
         $this->con = DriverManager::getConnection(array(
             'driver' => 'pdo_sqlite',
             'memory' => true,

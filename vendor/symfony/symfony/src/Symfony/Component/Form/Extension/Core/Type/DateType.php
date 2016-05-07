@@ -146,6 +146,10 @@ class DateType extends AbstractType
 
             // remove special characters unless the format was explicitly specified
             if (!is_string($options['format'])) {
+                // remove quoted strings first
+                $pattern = preg_replace('/\'[^\']+\'/', '', $pattern);
+
+                // remove remaining special chars
                 $pattern = preg_replace('/[^yMd]+/', '', $pattern);
             }
 
@@ -258,7 +262,7 @@ class DateType extends AbstractType
         $pattern = $formatter->getPattern();
         $timezone = $formatter->getTimezoneId();
 
-        if ($setTimeZone = method_exists($formatter, 'setTimeZone')) {
+        if ($setTimeZone = PHP_VERSION_ID >= 50500 || method_exists($formatter, 'setTimeZone')) {
             $formatter->setTimeZone('UTC');
         } else {
             $formatter->setTimeZoneId('UTC');

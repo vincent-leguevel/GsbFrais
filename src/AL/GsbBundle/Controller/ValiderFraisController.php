@@ -18,13 +18,16 @@ class ValiderFraisController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
 
-        $utilisateurs = $em->getRepository('ALGsbBundle:Utilisateur')->findBy(array('fonction' => 'V'));
+        //$utilisateurs = $em->getRepository('ALGsbBundle:Utilisateur')->findBy(array('fonction' => 'V'));
 
         $mois = range(1, 31);
         $annee = range(date('Y') - 4, date('Y'));
         $form = $this->createFormBuilder()
-                ->add('utilisateur', 'choice', array(
-                    'choices' => $utilisateurs))
+                ->add('utilisateur', 'entity', array(
+			'class' => 'AL\\GsbBundle\Entity\Utilisateur',
+			'property' => 'nom'))
+//                ->add('utilisateur', 'choice', array(
+//                    'choices' => $utilisateurs))
                 ->add('mois', 'choice', array(
                     'choices' => $mois))
                 ->add('annee', 'choice', array(
@@ -35,7 +38,7 @@ class ValiderFraisController extends Controller {
         $form->handleRequest($this->get('request'));
         if ($form->isValid()) {
             $formData = $form->getData();
-            $user = $utilisateurs[$formData['utilisateur']];
+            //$user = $utilisateurs[$formData['utilisateur']];
 
             if ($mois[$formData['mois']] < 10) {
                 $date = $annee[$formData['annee']] . "-" . "0" . $mois[$formData['mois']];
@@ -43,7 +46,7 @@ class ValiderFraisController extends Controller {
                 $date = $annee[$formData['annee']] . "-" . $mois[$formData['mois']];
             }
             $etat = $em->getRepository('ALGsbBundle:Etat')->find(2);
-            $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byUserDateEtat($user, $date, $etat);
+            $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byUserDateEtat($formData['utilisateur'], $date, $etat);
             if ($ficheFrais != null) {
 
                 return $this->redirectToRoute('al_gsb_valider_frais_details', array('id_ficheFrais' => $ficheFrais->getId()));
@@ -165,8 +168,8 @@ class ValiderFraisController extends Controller {
             //la fiche de frais du mois prochain va ếtre créé pour pouvoir reporter le hors forfait
             $etat = $em->getRepository('ALGsbBundle:Etat')->find(3);
             $ficheFraisCreer = new \AL\GsbBundle\Entity\FicheFrais();
-            $ficheFraisCreer->setDateModif($this->buildDate());
-            $ficheFraisCreer->setDateRedac($this->buildDate());
+            $ficheFraisCreer->setDateModif($this->buildDate(true));
+            $ficheFraisCreer->setDateRedac($this->buildDate(true));
             $ficheFraisCreer->setMontantValide(0);
             $ficheFraisCreer->setUtilisateur($ficheFrais->getUtilisateur());
             $ficheFraisCreer->setEtat($etat);
@@ -176,7 +179,7 @@ class ValiderFraisController extends Controller {
             // Initialise les frais forfaitisé à 0 pour la fiche de frais du mois suivant
             for ($i = 1; $i <= 4; $i++) {
                 $ligneFraisForfait = new \AL\GsbBundle\Entity\LigneFraisForfait();
-                $ligneFraisForfait->setFicheFrais($ficheFrais);
+                $ligneFraisForfait->setFicheFrais($ficheFraisCreer);
 
                 $ligneFraisForfait->setFraisForfait($this->findFraisForfait($i));
                 if ($i == 1) {
@@ -241,7 +244,7 @@ class ValiderFraisController extends Controller {
             if ($fraisForfait->getId() == 1) {
                 $form->add('etape', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
             } elseif ($fraisForfait->getId() == 2) {
-                $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite(), 'precision' => '2'));
+                $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite()));
             } elseif ($fraisForfait->getId() == 3) {
                 $form->add('nuitees', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
             } elseif ($fraisForfait->getId() == 4) {
@@ -249,7 +252,7 @@ class ValiderFraisController extends Controller {
             }
         }
         $form->add('nbJustificatifs', 'integer', array('data' => $ficheFrais->getNbJustificatifs()));
-        $form->add('montantValide', 'number', array('data' => $ficheFrais->getMontantValide(), 'precision' => '2'));
+        $form->add('montantValide', 'number', array('data' => $ficheFrais->getMontantValide()));
         $form->add('Valider', 'submit');
         return $form->getForm();
     }

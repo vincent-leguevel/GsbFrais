@@ -173,7 +173,7 @@ class SaisirFraisController extends Controller {
                 if ($fraisForfait->getId() == 1) {
                     $form->add('etape', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
                 } elseif ($fraisForfait->getId() == 2) {
-                    $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite(),'precision' => '2'));
+                    $form->add('km', 'number', array('data' => $ligneFraisForfait->getQuantite()));
                 } elseif ($fraisForfait->getId() == 3) {
                     $form->add('nuitees', 'integer', array('data' => $ligneFraisForfait->getQuantite()));
                 } elseif ($fraisForfait->getId() == 4) {

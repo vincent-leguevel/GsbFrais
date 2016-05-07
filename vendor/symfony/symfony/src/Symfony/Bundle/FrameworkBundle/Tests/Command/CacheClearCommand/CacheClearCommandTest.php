@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Bundle\FrameworkBundle\Tests\Command\CacheClearCommand;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -24,7 +33,7 @@ class CacheClearCommandTest extends TestCase
     {
         $this->fs = new Filesystem();
         $this->kernel = new TestAppKernel('test', true);
-        $this->rootDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('sf2_cache_');
+        $this->rootDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('sf2_cache_', true);
         $this->kernel->setRootDir($this->rootDir);
         $this->fs->mkdir($this->rootDir);
     }

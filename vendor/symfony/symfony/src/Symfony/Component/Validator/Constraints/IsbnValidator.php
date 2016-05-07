@@ -17,7 +17,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Validates whether the value is a valid ISBN-10 or ISBN-13
+ * Validates whether the value is a valid ISBN-10 or ISBN-13.
  *
  * @author The Whole Life To Learn <thewholelifetolearn@gmail.com>
  * @author Manuel Reinhard <manu@sprain.ch>
@@ -49,10 +49,10 @@ class IsbnValidator extends ConstraintValidator
 
         if (null === $constraint->type) {
             if ($constraint->isbn10 && !$constraint->isbn13) {
-                trigger_error('The "isbn10" option of the Isbn constraint is deprecated since version 2.5 and will be removed in 3.0. Use the "type" option instead.', E_USER_DEPRECATED);
+                @trigger_error('The "isbn10" option of the Isbn constraint is deprecated since version 2.5 and will be removed in 3.0. Use the "type" option instead.', E_USER_DEPRECATED);
                 $constraint->type = 'isbn10';
             } elseif ($constraint->isbn13 && !$constraint->isbn10) {
-                trigger_error('The "isbn13" option of the Isbn constraint is deprecated since version 2.5 and will be removed in 3.0. Use the "type" option instead.', E_USER_DEPRECATED);
+                @trigger_error('The "isbn13" option of the Isbn constraint is deprecated since version 2.5 and will be removed in 3.0. Use the "type" option instead.', E_USER_DEPRECATED);
                 $constraint->type = 'isbn13';
             }
         }

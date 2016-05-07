@@ -162,7 +162,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="checkbox"]
     [
         ./label
-            [.="[trans]Name[/trans]"]
+            [.=" [trans]Name[/trans]"]
             [
                 ./input[@type="checkbox"][@name="name"][@id="my&id"][@class="my&class"][@checked="checked"][@value="1"]
             ]
@@ -180,7 +180,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="checkbox"]
     [
         ./label
-            [.="[trans]Name[/trans]"]
+            [.=" [trans]Name[/trans]"]
             [
                 ./input[@type="checkbox"][@name="name"][@id="my&id"][@class="my&class"][not(@checked)]
             ]
@@ -200,7 +200,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="checkbox"]
     [
         ./label
-            [.="[trans]Name[/trans]"]
+            [.=" [trans]Name[/trans]"]
             [
                 ./input[@type="checkbox"][@name="name"][@id="my&id"][@class="my&class"][@value="foo&bar"]
             ]
@@ -225,6 +225,29 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [
         ./option[@value="&a"][@selected="selected"][.="[trans]Choice&A[/trans]"]
         /following-sibling::option[@value="&b"][not(@selected)][.="[trans]Choice&B[/trans]"]
+    ]
+    [count(./option)=2]
+'
+        );
+    }
+
+    public function testSingleChoiceWithoutTranslation()
+    {
+        $form = $this->factory->createNamed('name', 'choice', '&a', array(
+            'choices' => array('&a' => 'Choice&A', '&b' => 'Choice&B'),
+            'multiple' => false,
+            'expanded' => false,
+            'choice_translation_domain' => false,
+        ));
+
+        $this->assertWidgetMatchesXpath($form->createView(), array('attr' => array('class' => 'my&class')),
+'/select
+    [@name="name"]
+    [@class="my&class form-control"]
+    [not(@required)]
+    [
+        ./option[@value="&a"][@selected="selected"][.="Choice&A"]
+        /following-sibling::option[@value="&b"][not(@selected)][.="Choice&B"]
     ]
     [count(./option)=2]
 '
@@ -359,7 +382,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="my&class form-control"]
     [not(@required)]
     [
-        ./option[@value=""][.="[trans][/trans]"]
+        ./option[@value=""][.=""]
         /following-sibling::option[@value="&a"][@selected="selected"][.="[trans]Choice&A[/trans]"]
         /following-sibling::option[@value="&b"][not(@selected)][.="[trans]Choice&B[/trans]"]
     ]
@@ -383,7 +406,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="my&class form-control"]
     [not(@required)]
     [
-        ./option[@value=""][.="[trans][/trans]"]
+        ./option[@value=""][.=""]
         /following-sibling::option[@value="&a"][not(@selected)][.="[trans]Choice&A[/trans]"]
         /following-sibling::option[@value="&b"][not(@selected)][.="[trans]Choice&B[/trans]"]
     ]
@@ -457,7 +480,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
     [@class="my&class form-control"]
     [@required="required"]
     [
-        ./option[@value=""][not(@selected)][not(@disabled)][.="[trans][/trans]"]
+        ./option[@value=""][not(@selected)][not(@disabled)][.=""]
         /following-sibling::option[@value="&a"][@selected="selected"][.="[trans]Choice&A[/trans]"]
         /following-sibling::option[@value="&b"][not(@selected)][.="[trans]Choice&B[/trans]"]
     ]
@@ -609,7 +632,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
                     ]
@@ -618,7 +641,43 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
+                    [
+                        ./input[@type="radio"][@name="name"][@id="name_1"][@value="&b"][not(@checked)]
+                    ]
+            ]
+        /following-sibling::input[@type="hidden"][@id="name__token"][@class="form-control"]
+    ]
+'
+        );
+    }
+
+    public function testSingleChoiceExpandedWithoutTranslation()
+    {
+        $form = $this->factory->createNamed('name', 'choice', '&a', array(
+            'choices' => array('&a' => 'Choice&A', '&b' => 'Choice&B'),
+            'multiple' => false,
+            'expanded' => true,
+            'choice_translation_domain' => false,
+        ));
+
+        $this->assertWidgetMatchesXpath($form->createView(), array(),
+'/div
+    [
+        ./div
+            [@class="radio"]
+            [
+                ./label
+                    [.=" Choice&A"]
+                    [
+                        ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
+                    ]
+            ]
+        /following-sibling::div
+            [@class="radio"]
+            [
+                ./label
+                    [.=" Choice&B"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_1"][@value="&b"][not(@checked)]
                     ]
@@ -647,7 +706,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_0"][@value="&a"][@checked]
                     ]
@@ -656,7 +715,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_1"][@value="&b"][not(@checked)]'.$classPart.'
                     ]
@@ -683,7 +742,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Test&Me[/trans]"]
+                    [.=" [trans]Test&Me[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_placeholder"][not(@checked)]
                     ]
@@ -692,7 +751,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_0"][@checked]
                     ]
@@ -701,7 +760,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_1"][not(@checked)]
                     ]
@@ -727,7 +786,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_0"][@checked]
                     ]
@@ -736,7 +795,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="radio"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
                     [
                         ./input[@type="radio"][@name="name"][@id="name_1"][not(@checked)]
                     ]
@@ -763,7 +822,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@checked][not(@required)]
                     ]
@@ -772,7 +831,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_1"][not(@checked)][not(@required)]
                     ]
@@ -781,7 +840,53 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&C[/trans]"]
+                    [.=" [trans]Choice&C[/trans]"]
+                    [
+                        ./input[@type="checkbox"][@name="name[]"][@id="name_2"][@checked][not(@required)]
+                    ]
+            ]
+        /following-sibling::input[@type="hidden"][@id="name__token"][@class="form-control"]
+    ]
+'
+        );
+    }
+
+    public function testMultipleChoiceExpandedWithoutTranslation()
+    {
+        $form = $this->factory->createNamed('name', 'choice', array('&a', '&c'), array(
+            'choices' => array('&a' => 'Choice&A', '&b' => 'Choice&B', '&c' => 'Choice&C'),
+            'multiple' => true,
+            'expanded' => true,
+            'required' => true,
+            'choice_translation_domain' => false,
+        ));
+
+        $this->assertWidgetMatchesXpath($form->createView(), array(),
+'/div
+    [
+        ./div
+            [@class="checkbox"]
+            [
+                ./label
+                    [.=" Choice&A"]
+                    [
+                        ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@checked][not(@required)]
+                    ]
+            ]
+        /following-sibling::div
+            [@class="checkbox"]
+            [
+                ./label
+                    [.=" Choice&B"]
+                    [
+                        ./input[@type="checkbox"][@name="name[]"][@id="name_1"][not(@checked)][not(@required)]
+                    ]
+            ]
+        /following-sibling::div
+            [@class="checkbox"]
+            [
+                ./label
+                    [.=" Choice&C"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_2"][@checked][not(@required)]
                     ]
@@ -811,7 +916,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&A[/trans]"]
+                    [.=" [trans]Choice&A[/trans]"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_0"][@checked][not(@required)]
                     ]
@@ -820,7 +925,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&B[/trans]"]
+                    [.=" [trans]Choice&B[/trans]"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_1"][not(@checked)][not(@required)]'.$classPart.'
                     ]
@@ -829,7 +934,7 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
             [@class="checkbox"]
             [
                 ./label
-                    [.="[trans]Choice&C[/trans]"]
+                    [.=" [trans]Choice&C[/trans]"]
                     [
                         ./input[@type="checkbox"][@name="name[]"][@id="name_2"][@checked][not(@required)]
                     ]
@@ -1278,17 +1383,17 @@ abstract class AbstractBootstrap3LayoutTest extends AbstractLayoutTest
         ./select
             [@id="name_month"]
             [@class="form-control"]
-            [./option[@value=""][not(@selected)][not(@disabled)][.="[trans][/trans]"]]
+            [./option[@value=""][not(@selected)][not(@disabled)][.=""]]
             [./option[@value="1"][@selected="selected"]]
         /following-sibling::select
             [@id="name_day"]
             [@class="form-control"]
-            [./option[@value=""][not(@selected)][not(@disabled)][.="[trans][/trans]"]]
+            [./option[@value=""][not(@selected)][not(@disabled)][.=""]]
             [./option[@value="1"][@selected="selected"]]
         /following-sibling::select
             [@id="name_year"]
             [@class="form-control"]
-            [./option[@value=""][not(@selected)][not(@disabled)][.="[trans][/trans]"]]
+            [./option[@value=""][not(@selected)][not(@disabled)][.=""]]
             [./option[@value="1950"][@selected="selected"]]
     ]
     [count(./select)=3]

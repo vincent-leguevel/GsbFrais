@@ -136,7 +136,7 @@ class FormExtensionDivLayoutTest extends AbstractDivLayoutTest
      */
     public function testIsChoiceSelected($expected, $choice, $value)
     {
-        $choice = new ChoiceView($choice.' label', $choice, $choice);
+        $choice = new ChoiceView($choice, $choice, $choice.' label');
 
         $this->assertSame($expected, $this->extension->isSelectedChoice($choice, $value));
     }
@@ -207,5 +207,15 @@ class FormExtensionDivLayoutTest extends AbstractDivLayoutTest
         return array(
             array(array('parent_label.html.twig'), array('child_label.html.twig')),
         );
+    }
+
+    public function testRange()
+    {
+        // No-op for forward compatibility with AbstractLayoutTest 2.8
+    }
+
+    public function testRangeWithMinMaxValues()
+    {
+        // No-op for forward compatibility with AbstractLayoutTest 2.8
     }
 }

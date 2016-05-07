@@ -18,25 +18,28 @@ class SuivrePaiementFicheFraisController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
 
-        $utilisateurs = $em->getRepository('ALGsbBundle:Utilisateur')->findBy(array('fonction' => 'V'));
+        //$utilisateurs = $em->getRepository('ALGsbBundle:Utilisateur')->findBy(array('fonction' => 'V'));
         
-        //Fiches de frais listée en fonction des état ci-dessous 
+        //Fiches de frais listées en fonction des états ci-dessous 
         $validee = $em->getRepository('ALGsbBundle:Etat')->find(4);
         $miseEnPaiement = $em->getRepository('ALGsbBundle:Etat')->find(5);
         $remboursee = $em->getRepository('ALGsbBundle:Etat')->find(1);
 
         $form = $this->createFormBuilder()
-                ->add('utilisateur', 'choice', array(
-                    'choices' => $utilisateurs))
+                ->add('utilisateur', 'entity', array(
+			'class' => 'AL\\GsbBundle\Entity\Utilisateur',
+			'property' => 'nom'))
+//                ->add('utilisateur', 'choice', array(
+//                    'choices' => $utilisateurs))
                 ->add('Valider', 'submit')
                 ->getForm();
 
         $form->handleRequest($this->get('request'));
         if ($form->isValid()) {
             $formData = $form->getData();
-            $user = $utilisateurs[$formData['utilisateur']];
+            //$user = $utilisateurs[$formData['utilisateur']];
  
-            $fichesFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byEtatValideeAndUser($validee,$miseEnPaiement,$remboursee,$user);
+            $fichesFrais = $em->getRepository('ALGsbBundle:FicheFrais')->byEtatValideeAndUser($validee,$miseEnPaiement,$remboursee,$formData['utilisateur']);
             
             if($fichesFrais != null){
                 

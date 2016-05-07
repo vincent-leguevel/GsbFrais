@@ -186,6 +186,32 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         }
     }
 
+    public function testExpandedChoicesOptionsAreFlattenedObjectChoices()
+    {
+        $obj1 = (object) array('id' => 1, 'name' => 'Bernhard');
+        $obj2 = (object) array('id' => 2, 'name' => 'Fabien');
+        $obj3 = (object) array('id' => 3, 'name' => 'Kris');
+        $obj4 = (object) array('id' => 4, 'name' => 'Jon');
+        $obj5 = (object) array('id' => 5, 'name' => 'Roman');
+
+        $form = $this->factory->create('choice', null, array(
+            'expanded' => true,
+            'choices' => array(
+                'Symfony' => array($obj1, $obj2, $obj3),
+                'Doctrine' => array($obj4, $obj5),
+            ),
+            'choices_as_values' => true,
+            'choice_name' => 'id',
+        ));
+
+        $this->assertSame(5, $form->count(), 'Each nested choice should become a new field, not the groups');
+        $this->assertTrue($form->has(1));
+        $this->assertTrue($form->has(2));
+        $this->assertTrue($form->has(3));
+        $this->assertTrue($form->has(4));
+        $this->assertTrue($form->has(5));
+    }
+
     public function testExpandedCheckboxesAreNeverRequired()
     {
         $form = $this->factory->create('choice', null, array(
@@ -1301,6 +1327,42 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $this->assertNull($form[4]->getViewData());
     }
 
+    public function testSingleSelectedObjectChoices()
+    {
+        $form = $this->factory->create('choice', $this->objectChoices[3], array(
+            'multiple' => false,
+            'expanded' => false,
+            'choices' => $this->objectChoices,
+            'choices_as_values' => true,
+            'choice_label' => 'name',
+            'choice_value' => 'id',
+        ));
+
+        $view = $form->createView();
+        $selectedChecker = $view->vars['is_selected'];
+
+        $this->assertTrue($selectedChecker($view->vars['choices'][3]->value, $view->vars['value']));
+        $this->assertFalse($selectedChecker($view->vars['choices'][1]->value, $view->vars['value']));
+    }
+
+    public function testMultipleSelectedObjectChoices()
+    {
+        $form = $this->factory->create('choice', array($this->objectChoices[3]), array(
+            'multiple' => true,
+            'expanded' => false,
+            'choices' => $this->objectChoices,
+            'choices_as_values' => true,
+            'choice_label' => 'name',
+            'choice_value' => 'id',
+        ));
+
+        $view = $form->createView();
+        $selectedChecker = $view->vars['is_selected'];
+
+        $this->assertTrue($selectedChecker($view->vars['choices'][3]->value, $view->vars['value']));
+        $this->assertFalse($selectedChecker($view->vars['choices'][1]->value, $view->vars['value']));
+    }
+
     /*
      * We need this functionality to create choice fields for Boolean types,
      * e.g. false => 'No', true => 'Yes'
@@ -1467,6 +1529,7 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
     /**
      * @dataProvider getOptionsWithPlaceholder
+     * @group legacy
      */
     public function testPassEmptyValueBC($multiple, $expanded, $required, $placeholder, $viewValue)
     {
@@ -1556,10 +1619,10 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertEquals(array(
-            new ChoiceView('A', 'a', 'a'),
-            new ChoiceView('B', 'b', 'b'),
-            new ChoiceView('C', 'c', 'c'),
-            new ChoiceView('D', 'd', 'd'),
+            new ChoiceView('a', 'a', 'A'),
+            new ChoiceView('b', 'b', 'B'),
+            new ChoiceView('c', 'c', 'C'),
+            new ChoiceView('d', 'd', 'D'),
         ), $view->vars['choices']);
     }
 
@@ -1573,12 +1636,12 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertEquals(array(
-            0 => new ChoiceView('A', 'a', 'a'),
-            2 => new ChoiceView('C', 'c', 'c'),
+            0 => new ChoiceView('a', 'a', 'A'),
+            2 => new ChoiceView('c', 'c', 'C'),
         ), $view->vars['choices']);
         $this->assertEquals(array(
-            1 => new ChoiceView('B', 'b', 'b'),
-            3 => new ChoiceView('D', 'd', 'd'),
+            1 => new ChoiceView('b', 'b', 'B'),
+            3 => new ChoiceView('d', 'd', 'D'),
         ), $view->vars['preferred_choices']);
     }
 
@@ -1592,19 +1655,19 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
 
         $this->assertEquals(array(
             'Symfony' => new ChoiceGroupView('Symfony', array(
-                0 => new ChoiceView('Bernhard', 'a', 'a'),
-                2 => new ChoiceView('Kris', 'c', 'c'),
+                0 => new ChoiceView('a', 'a', 'Bernhard'),
+                2 => new ChoiceView('c', 'c', 'Kris'),
             )),
             'Doctrine' => new ChoiceGroupView('Doctrine', array(
-                4 => new ChoiceView('Roman', 'e', 'e'),
+                4 => new ChoiceView('e', 'e', 'Roman'),
             )),
         ), $view->vars['choices']);
         $this->assertEquals(array(
             'Symfony' => new ChoiceGroupView('Symfony', array(
-                1 => new ChoiceView('Fabien', 'b', 'b'),
+                1 => new ChoiceView('b', 'b', 'Fabien'),
             )),
             'Doctrine' => new ChoiceGroupView('Doctrine', array(
-                3 => new ChoiceView('Jon', 'd', 'd'),
+                3 => new ChoiceView('d', 'd', 'Jon'),
             )),
         ), $view->vars['preferred_choices']);
     }
@@ -1624,10 +1687,10 @@ class ChoiceTypeTest extends \Symfony\Component\Form\Test\TypeTestCase
         $view = $form->createView();
 
         $this->assertEquals(array(
-            new ChoiceView('A', 'a', $obj1),
-            new ChoiceView('B', 'b', $obj2),
-            new ChoiceView('C', 'c', $obj3),
-            new ChoiceView('D', 'd', $obj4),
+            new ChoiceView($obj1, 'a', 'A'),
+            new ChoiceView($obj2, 'b', 'B'),
+            new ChoiceView($obj3, 'c', 'C'),
+            new ChoiceView($obj4, 'd', 'D'),
         ), $view->vars['choices']);
     }
 

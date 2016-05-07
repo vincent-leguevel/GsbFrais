@@ -14,8 +14,8 @@ namespace Symfony\Bridge\Twig;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -68,13 +68,15 @@ class AppVariable
      */
     public function getSecurity()
     {
-        trigger_error('The "app.security" variable is deprecated since version 2.6 and will be removed in 3.0.', E_USER_DEPRECATED);
+        @trigger_error('The "app.security" variable is deprecated since version 2.6 and will be removed in 3.0.', E_USER_DEPRECATED);
 
         if (null === $this->container) {
             throw new \RuntimeException('The "app.security" variable is not available.');
         }
 
-        return $this->container->get('security.context');
+        if ($this->container->has('security.context')) {
+            return $this->container->get('security.context');
+        }
     }
 
     /**
@@ -89,6 +91,8 @@ class AppVariable
         if (null === $this->tokenStorage) {
             if (null === $this->container) {
                 throw new \RuntimeException('The "app.user" variable is not available.');
+            } elseif (!$this->container->has('security.context')) {
+                return;
             }
 
             $this->tokenStorage = $this->container->get('security.context');

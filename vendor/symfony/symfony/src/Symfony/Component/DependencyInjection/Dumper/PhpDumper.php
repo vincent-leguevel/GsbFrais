@@ -32,8 +32,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- *
- * @api
  */
 class PhpDumper extends Dumper
 {
@@ -72,8 +70,6 @@ class PhpDumper extends Dumper
 
     /**
      * {@inheritdoc}
-     *
-     * @api
      */
     public function __construct(ContainerBuilder $container)
     {
@@ -104,8 +100,6 @@ class PhpDumper extends Dumper
      * @param array $options An array of options
      *
      * @return string A PHP class representing of the service container
-     *
-     * @api
      */
     public function dump(array $options = array())
     {
@@ -372,7 +366,13 @@ class PhpDumper extends Dumper
      */
     private function addServiceInstance($id, $definition)
     {
-        $class = $this->dumpValue($definition->getClass());
+        $class = $definition->getClass();
+
+        if ('\\' === substr($class, 0, 1)) {
+            $class = substr($class, 1);
+        }
+
+        $class = $this->dumpValue($class);
 
         if (0 === strpos($class, "'") && !preg_match('/^\'[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(\\\{2}[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)*\'$/', $class)) {
             throw new InvalidArgumentException(sprintf('"%s" is not a valid class name for the "%s" service.', $class, $id));
@@ -560,7 +560,7 @@ class PhpDumper extends Dumper
         if ($definition->isSynthetic()) {
             $return[] = '@throws RuntimeException always since this service is expected to be injected dynamically';
         } elseif ($class = $definition->getClass()) {
-            $return[] = sprintf('@return %s A %s instance.', 0 === strpos($class, '%') ? 'object' : '\\'.$class, $class);
+            $return[] = sprintf('@return %s A %s instance.', 0 === strpos($class, '%') ? 'object' : '\\'.ltrim($class, '\\'), ltrim($class, '\\'));
         } elseif ($definition->getFactory()) {
             $factory = $definition->getFactory();
             if (is_string($factory)) {
@@ -705,7 +705,7 @@ EOF;
         }
 
         if ('request' !== $id) {
-            trigger_error('Synchronized services were deprecated in version 2.7 and won\'t work anymore in 3.0.', E_USER_DEPRECATED);
+            @trigger_error('Synchronized services were deprecated in version 2.7 and won\'t work anymore in 3.0.', E_USER_DEPRECATED);
         }
 
         $code = '';
@@ -862,8 +862,8 @@ EOF;
 
         if (count($scopes = $this->container->getScopes()) > 0) {
             $code .= "\n";
-            $code .= "        \$this->scopes = ".$this->dumpValue($scopes).";\n";
-            $code .= "        \$this->scopeChildren = ".$this->dumpValue($this->container->getScopeChildren()).";\n";
+            $code .= '        $this->scopes = '.$this->dumpValue($scopes).";\n";
+            $code .= '        $this->scopeChildren = '.$this->dumpValue($this->container->getScopeChildren()).";\n";
         }
 
         $code .= $this->addMethodMap();
@@ -908,8 +908,8 @@ EOF;
 
         $code .= "\n";
         if (count($scopes = $this->container->getScopes()) > 0) {
-            $code .= "        \$this->scopes = ".$this->dumpValue($scopes).";\n";
-            $code .= "        \$this->scopeChildren = ".$this->dumpValue($this->container->getScopeChildren()).";\n";
+            $code .= '        $this->scopes = '.$this->dumpValue($scopes).";\n";
+            $code .= '        $this->scopeChildren = '.$this->dumpValue($this->container->getScopeChildren()).";\n";
         } else {
             $code .= "        \$this->scopes = array();\n";
             $code .= "        \$this->scopeChildren = array();\n";
@@ -1301,11 +1301,6 @@ EOF;
             foreach ($value->getArguments() as $argument) {
                 $arguments[] = $this->dumpValue($argument);
             }
-            $class = $this->dumpValue($value->getClass());
-
-            if (false !== strpos($class, '$')) {
-                throw new RuntimeException('Cannot dump definitions which have a variable class name.');
-            }
 
             if (null !== $value->getFactory()) {
                 $factory = $value->getFactory();
@@ -1341,6 +1336,15 @@ EOF;
                 } else {
                     throw new RuntimeException('Cannot dump definitions which have factory method without factory service or factory class.');
                 }
+            }
+
+            $class = $value->getClass();
+            if (null === $class) {
+                throw new RuntimeException('Cannot dump definitions which have no class nor factory.');
+            }
+            $class = $this->dumpValue($class);
+            if (false !== strpos($class, '$')) {
+                throw new RuntimeException('Cannot dump definitions which have a variable class name.');
             }
 
             return sprintf('new \\%s(%s)', substr(str_replace('\\\\', '\\', $class), 1, -1), implode(', ', $arguments));
@@ -1414,7 +1418,7 @@ EOF;
      */
     public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
     {
-        trigger_error('The '.__METHOD__.' method is deprecated since version 2.6.2 and will be removed in 3.0. Use the Symfony\Component\DependencyInjection\ContainerBuilder::addExpressionLanguageProvider method instead.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.6.2 and will be removed in 3.0. Use the Symfony\Component\DependencyInjection\ContainerBuilder::addExpressionLanguageProvider method instead.', E_USER_DEPRECATED);
 
         $this->expressionLanguageProviders[] = $provider;
     }

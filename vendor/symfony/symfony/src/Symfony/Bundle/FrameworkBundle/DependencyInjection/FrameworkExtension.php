@@ -444,7 +444,7 @@ class FrameworkExtension extends Extension
     /**
      * Loads the request configuration.
      *
-     * @param array            $config    A session configuration array
+     * @param array            $config    A request configuration array
      * @param ContainerBuilder $container A ContainerBuilder instance
      * @param XmlFileLoader    $loader    An XmlFileLoader instance
      */
@@ -471,14 +471,17 @@ class FrameworkExtension extends Extension
     {
         $loader->load('templating.xml');
 
-        $links = array(
-            'textmate' => 'txmt://open?url=file://%%f&line=%%l',
-            'macvim' => 'mvim://open?url=file://%%f&line=%%l',
-            'emacs' => 'emacs://open?url=file://%%f&line=%%l',
-            'sublime' => 'subl://open?url=file://%%f&line=%%l',
-        );
+        if (!$container->hasParameter('templating.helper.code.file_link_format')) {
+            $links = array(
+                'textmate' => 'txmt://open?url=file://%%f&line=%%l',
+                'macvim' => 'mvim://open?url=file://%%f&line=%%l',
+                'emacs' => 'emacs://open?url=file://%%f&line=%%l',
+                'sublime' => 'subl://open?url=file://%%f&line=%%l',
+            );
 
-        $container->setParameter('templating.helper.code.file_link_format', isset($links[$ide]) ? $links[$ide] : $ide);
+            $container->setParameter('templating.helper.code.file_link_format', str_replace('%', '%%', ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format')) ?: (isset($links[$ide]) ? $links[$ide] : $ide));
+        }
+
         $container->setParameter('fragment.renderer.hinclude.global_template', $config['hinclude_default_template']);
 
         if ($container->getParameter('kernel.debug')) {
@@ -670,22 +673,22 @@ class FrameworkExtension extends Extension
         if (class_exists('Symfony\Component\Validator\Validation')) {
             $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
 
-            $dirs[] = dirname($r->getFilename()).'/Resources/translations';
+            $dirs[] = dirname($r->getFileName()).'/Resources/translations';
         }
         if (class_exists('Symfony\Component\Form\Form')) {
             $r = new \ReflectionClass('Symfony\Component\Form\Form');
 
-            $dirs[] = dirname($r->getFilename()).'/Resources/translations';
+            $dirs[] = dirname($r->getFileName()).'/Resources/translations';
         }
         if (class_exists('Symfony\Component\Security\Core\Exception\AuthenticationException')) {
             $r = new \ReflectionClass('Symfony\Component\Security\Core\Exception\AuthenticationException');
 
-            $dirs[] = dirname($r->getFilename()).'/../Resources/translations';
+            $dirs[] = dirname($r->getFileName()).'/../Resources/translations';
         }
         $overridePath = $container->getParameter('kernel.root_dir').'/Resources/%s/translations';
         foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
             $reflection = new \ReflectionClass($class);
-            if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
+            if (is_dir($dir = dirname($reflection->getFileName()).'/Resources/translations')) {
                 $dirs[] = $dir;
             }
             if (is_dir($dir = sprintf($overridePath, $bundle))) {
@@ -800,7 +803,7 @@ class FrameworkExtension extends Extension
         $bundles = $container->getParameter('kernel.bundles');
         foreach ($bundles as $bundle) {
             $reflection = new \ReflectionClass($bundle);
-            $dirname = dirname($reflection->getFilename());
+            $dirname = dirname($reflection->getFileName());
 
             if (is_file($file = $dirname.'/Resources/config/validation.xml')) {
                 $files[0][] = realpath($file);
@@ -915,7 +918,7 @@ class FrameworkExtension extends Extension
         $bundles = $container->getParameter('kernel.bundles');
         foreach ($bundles as $bundle) {
             $reflection = new \ReflectionClass($bundle);
-            $dirname = dirname($reflection->getFilename());
+            $dirname = dirname($reflection->getFileName());
 
             if (is_file($file = $dirname.'/Resources/config/serialization.xml')) {
                 $definition = new Definition('Symfony\Component\Serializer\Mapping\Loader\XmlFileLoader', array(realpath($file)));

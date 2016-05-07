@@ -300,9 +300,17 @@ UPGRADE FROM 2.x to 3.0
    echo $form->getErrors(true, false);
    ```
 
-   ```php
-   echo $form->getErrors(true, false);
-   ```
+ * The `Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList` class has been removed in
+   favor of `Symfony\Component\Form\ChoiceList\ArrayChoiceList`.
+
+ * The `Symfony\Component\Form\Extension\Core\ChoiceList\LazyChoiceList` class has been removed in
+   favor of `Symfony\Component\Form\ChoiceList\LazyChoiceList`.
+
+ * The `Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList` class has been removed in
+   favor of `Symfony\Component\Form\ChoiceList\ArrayChoiceList`.
+
+ * The `Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList` class has been removed in
+   favor of `Symfony\Component\Form\ChoiceList\ArrayChoiceList`.
 
 ### FrameworkBundle
 
@@ -349,7 +357,7 @@ UPGRADE FROM 2.x to 3.0
  * The `request` service was removed. You must inject the `request_stack`
    service instead.
 
- * The `templating.helper.assets` was moved to `templating_php.xml`. You can
+ * The `templating.helper.assets` was removed in Symfony 3.0. You should
    use the `assets.package` service instead.
 
    Before:
@@ -445,6 +453,21 @@ UPGRADE FROM 2.x to 3.0
    ```
 
  * The `RouterApacheDumperCommand` was removed.
+
+ * The `templating.helper.router` service was moved to `templating_php.xml`. You
+   have to ensure that the PHP templating engine is enabled to be able to use it:
+
+   ```yaml
+   framework:
+       templating:
+           engines: ['php']
+   ```
+
+ * The `form.csrf_provider` service is removed as it implements an adapter for
+   the new token manager to the deprecated
+   `Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface`
+   interface.
+   The `security.csrf.token_manager` should be used instead.
 
 ### HttpKernel
 

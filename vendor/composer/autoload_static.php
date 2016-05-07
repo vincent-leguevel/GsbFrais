@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
+class ComposerStaticInit96833cb277901a53478a858bca7ba3ce
 {
     public static $files = array (
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
@@ -25,15 +25,19 @@ class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
             'Symfony\\Bridge\\ProxyManager\\' => 28,
             'Symfony\\Bridge\\Monolog\\' => 23,
             'Symfony\\Bridge\\Doctrine\\' => 24,
-            'SymfonyStandard\\' => 16,
             'Sensio\\Bundle\\FrameworkExtraBundle\\' => 35,
         ),
         'M' => 
         array (
             'Monolog\\' => 8,
         ),
+        'I' => 
+        array (
+            'Incenteev\\ParameterHandler\\' => 27,
+        ),
         'D' => 
         array (
+            'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Bundle\\DoctrineBundle\\' => 31,
         ),
     );
@@ -79,10 +83,6 @@ class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
         array (
             0 => __DIR__ . '/..' . '/symfony/symfony/src/Symfony/Bridge/Doctrine',
         ),
-        'SymfonyStandard\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/app',
-        ),
         'Sensio\\Bundle\\FrameworkExtraBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/sensio/framework-extra-bundle',
@@ -90,6 +90,14 @@ class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Incenteev\\ParameterHandler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/incenteev/composer-parameter-handler',
+        ),
+        'Doctrine\\Instantiator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
         'Doctrine\\Bundle\\DoctrineBundle\\' => 
         array (
@@ -129,13 +137,6 @@ class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
             'Psr\\Log\\' => 
             array (
                 0 => __DIR__ . '/..' . '/psr/log',
-            ),
-        ),
-        'I' => 
-        array (
-            'Incenteev\\ParameterHandler' => 
-            array (
-                0 => __DIR__ . '/..' . '/incenteev/composer-parameter-handler',
             ),
         ),
         'D' => 
@@ -198,11 +199,11 @@ class ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitff287c389fb15f8f8eba643502a8f7fb::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit96833cb277901a53478a858bca7ba3ce::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit96833cb277901a53478a858bca7ba3ce::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit96833cb277901a53478a858bca7ba3ce::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit96833cb277901a53478a858bca7ba3ce::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit96833cb277901a53478a858bca7ba3ce::$classMap;
 
         }, null, ClassLoader::class);
     }

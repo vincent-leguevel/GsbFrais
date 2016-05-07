@@ -27,6 +27,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testDoNoDuplicateDefaultFormResources()
+    {
+        $input = array('templating' => array(
+            'form' => array('resources' => array('FrameworkBundle:Form')),
+            'engines' => array('php'),
+        ));
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration(new Configuration(true), array($input));
+
+        $this->assertEquals(array('FrameworkBundle:Form'), $config['templating']['form']['resources']);
+    }
+
     /**
      * @dataProvider getTestValidTrustedProxiesData
      */
@@ -93,8 +106,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function testLegacyInvalidValueAssets()
     {
-        $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
-
         $processor = new Processor();
         $configuration = new Configuration(true);
         $processor->processConfiguration($configuration, array(

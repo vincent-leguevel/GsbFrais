@@ -93,7 +93,7 @@ class DigestAuthenticationListener implements ListenerInterface
             }
 
             $serverDigestMd5 = $digestAuth->calculateServerDigest($user->getPassword(), $request->getMethod());
-        } catch (UsernameNotFoundException $notFound) {
+        } catch (UsernameNotFoundException $e) {
             $this->fail($event, $request, new BadCredentialsException(sprintf('Username %s not found.', $digestAuth->getUsername())));
 
             return;
@@ -101,7 +101,7 @@ class DigestAuthenticationListener implements ListenerInterface
 
         if ($serverDigestMd5 !== $digestAuth->getResponse()) {
             if (null !== $this->logger) {
-                $this->logger->debug("Unexpected response from the DigestAuth received; is the header returning a clear text passwords?", array('expected' => $serverDigestMd5, 'received' => $digestAuth->getResponse()));
+                $this->logger->debug('Unexpected response from the DigestAuth received; is the header returning a clear text passwords?', array('expected' => $serverDigestMd5, 'received' => $digestAuth->getResponse()));
             }
 
             $this->fail($event, $request, new BadCredentialsException('Incorrect response'));

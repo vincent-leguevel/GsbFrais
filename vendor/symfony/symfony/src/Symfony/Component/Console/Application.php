@@ -54,8 +54,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *     $app->run();
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @api
  */
 class Application
 {
@@ -77,8 +75,6 @@ class Application
      *
      * @param string $name    The name of the application
      * @param string $version The version of the application
-     *
-     * @api
      */
     public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN')
     {
@@ -107,8 +103,6 @@ class Application
      * @return int 0 if everything went fine, or an error code
      *
      * @throws \Exception When doRun returns Exception
-     *
-     * @api
      */
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
@@ -202,8 +196,6 @@ class Application
      * Set a helper set to be used with the command.
      *
      * @param HelperSet $helperSet The helper set
-     *
-     * @api
      */
     public function setHelperSet(HelperSet $helperSet)
     {
@@ -214,8 +206,6 @@ class Application
      * Get the helper set associated with the command.
      *
      * @return HelperSet The HelperSet instance associated with this command
-     *
-     * @api
      */
     public function getHelperSet()
     {
@@ -226,8 +216,6 @@ class Application
      * Set an input definition set to be used with this application.
      *
      * @param InputDefinition $definition The input definition
-     *
-     * @api
      */
     public function setDefinition(InputDefinition $definition)
     {
@@ -258,8 +246,6 @@ class Application
      * Sets whether to catch exceptions or not during commands execution.
      *
      * @param bool $boolean Whether to catch exceptions or not during commands execution
-     *
-     * @api
      */
     public function setCatchExceptions($boolean)
     {
@@ -270,8 +256,6 @@ class Application
      * Sets whether to automatically exit after a command execution or not.
      *
      * @param bool $boolean Whether to automatically exit after a command execution or not
-     *
-     * @api
      */
     public function setAutoExit($boolean)
     {
@@ -282,8 +266,6 @@ class Application
      * Gets the name of the application.
      *
      * @return string The application name
-     *
-     * @api
      */
     public function getName()
     {
@@ -294,8 +276,6 @@ class Application
      * Sets the application name.
      *
      * @param string $name The application name
-     *
-     * @api
      */
     public function setName($name)
     {
@@ -306,8 +286,6 @@ class Application
      * Gets the application version.
      *
      * @return string The application version
-     *
-     * @api
      */
     public function getVersion()
     {
@@ -318,8 +296,6 @@ class Application
      * Sets the application version.
      *
      * @param string $version The application version
-     *
-     * @api
      */
     public function setVersion($version)
     {
@@ -330,8 +306,6 @@ class Application
      * Returns the long version of the application.
      *
      * @return string The long application version
-     *
-     * @api
      */
     public function getLongVersion()
     {
@@ -348,8 +322,6 @@ class Application
      * @param string $name The command name
      *
      * @return Command The newly created command
-     *
-     * @api
      */
     public function register($name)
     {
@@ -360,8 +332,6 @@ class Application
      * Adds an array of command objects.
      *
      * @param Command[] $commands An array of commands
-     *
-     * @api
      */
     public function addCommands(array $commands)
     {
@@ -378,8 +348,6 @@ class Application
      * @param Command $command A Command object
      *
      * @return Command The registered command
-     *
-     * @api
      */
     public function add(Command $command)
     {
@@ -412,8 +380,6 @@ class Application
      * @return Command A Command object
      *
      * @throws \InvalidArgumentException When command name given does not exist
-     *
-     * @api
      */
     public function get($name)
     {
@@ -441,8 +407,6 @@ class Application
      * @param string $name The command name or alias
      *
      * @return bool true if the command exists, false otherwise
-     *
-     * @api
      */
     public function has($name)
     {
@@ -488,7 +452,7 @@ class Application
         if (empty($namespaces)) {
             $message = sprintf('There are no commands defined in the "%s" namespace.', $namespace);
 
-            if ($alternatives = $this->findAlternatives($namespace, $allNamespaces, array())) {
+            if ($alternatives = $this->findAlternatives($namespace, $allNamespaces)) {
                 if (1 == count($alternatives)) {
                     $message .= "\n\nDid you mean this?\n    ";
                 } else {
@@ -520,8 +484,6 @@ class Application
      * @return Command A Command instance
      *
      * @throws \InvalidArgumentException When command name is incorrect or ambiguous
-     *
-     * @api
      */
     public function find($name)
     {
@@ -537,7 +499,7 @@ class Application
 
             $message = sprintf('Command "%s" is not defined.', $name);
 
-            if ($alternatives = $this->findAlternatives($name, $allCommands, array())) {
+            if ($alternatives = $this->findAlternatives($name, $allCommands)) {
                 if (1 == count($alternatives)) {
                     $message .= "\n\nDid you mean this?\n    ";
                 } else {
@@ -577,8 +539,6 @@ class Application
      * @param string $namespace A namespace name
      *
      * @return Command[] An array of Command instances
-     *
-     * @api
      */
     public function all($namespace = null)
     {
@@ -628,7 +588,7 @@ class Application
      */
     public function asText($namespace = null, $raw = false)
     {
-        trigger_error('The '.__METHOD__.' method is deprecated since version 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
 
         $descriptor = new TextDescriptor();
         $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, !$raw);
@@ -649,7 +609,7 @@ class Application
      */
     public function asXml($namespace = null, $asDom = false)
     {
-        trigger_error('The '.__METHOD__.' method is deprecated since version 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
 
         $descriptor = new XmlDescriptor();
 
@@ -885,13 +845,15 @@ class Application
             try {
                 $exitCode = $command->run($input, $output);
             } catch (\Exception $e) {
+                $event = new ConsoleExceptionEvent($command, $input, $output, $e, $e->getCode());
+                $this->dispatcher->dispatch(ConsoleEvents::EXCEPTION, $event);
+
+                $e = $event->getException();
+
                 $event = new ConsoleTerminateEvent($command, $input, $output, $e->getCode());
                 $this->dispatcher->dispatch(ConsoleEvents::TERMINATE, $event);
 
-                $event = new ConsoleExceptionEvent($command, $input, $output, $e, $event->getExitCode());
-                $this->dispatcher->dispatch(ConsoleEvents::EXCEPTION, $event);
-
-                throw $event->getException();
+                throw $e;
             }
         } else {
             $exitCode = ConsoleCommandEvent::RETURN_CODE_DISABLED;
@@ -1086,7 +1048,7 @@ class Application
             }
         }
 
-        $alternatives = array_filter($alternatives, function ($lev) use ($threshold) { return $lev < 2*$threshold; });
+        $alternatives = array_filter($alternatives, function ($lev) use ($threshold) { return $lev < 2 * $threshold; });
         asort($alternatives);
 
         return array_keys($alternatives);
@@ -1142,7 +1104,7 @@ class Application
             $lines[] = str_pad($line, $width);
             $line = $char;
         }
-        if (strlen($line)) {
+        if ('' !== $line) {
             $lines[] = count($lines) ? str_pad($line, $width) : $line;
         }
 

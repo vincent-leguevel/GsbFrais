@@ -14,7 +14,7 @@ namespace Symfony\Bridge\Doctrine\Form\ChoiceList;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Loads entities using a {@link QueryBuilder} instance.
@@ -43,7 +43,7 @@ class ORMQueryBuilderLoader implements EntityLoaderInterface
      *                                            deprecated and will not be
      *                                            supported anymore as of
      *                                            Symfony 3.0.
-     * @param EntityManager         $manager      Deprecated.
+     * @param ObjectManager         $manager      Deprecated.
      * @param string                $class        Deprecated.
      *
      * @throws UnexpectedTypeException
@@ -57,14 +57,14 @@ class ORMQueryBuilderLoader implements EntityLoaderInterface
         }
 
         if ($queryBuilder instanceof \Closure) {
-            trigger_error('Passing a QueryBuilder closure to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
+            @trigger_error('Passing a QueryBuilder closure to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
 
-            if (!$manager instanceof EntityManager) {
-                throw new UnexpectedTypeException($manager, 'Doctrine\ORM\EntityManager');
+            if (!$manager instanceof ObjectManager) {
+                throw new UnexpectedTypeException($manager, 'Doctrine\Common\Persistence\ObjectManager');
             }
 
-            trigger_error('Passing an EntityManager to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
-            trigger_error('Passing a class to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
+            @trigger_error('Passing an EntityManager to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
+            @trigger_error('Passing a class to '.__CLASS__.'::__construct() is deprecated since version 2.7 and will be removed in 3.0.', E_USER_DEPRECATED);
 
             $queryBuilder = $queryBuilder($manager->getRepository($class));
 
@@ -99,8 +99,17 @@ class ORMQueryBuilderLoader implements EntityLoaderInterface
         $metadata = $qb->getEntityManager()->getClassMetadata($entity);
         if (in_array($metadata->getTypeOfField($identifier), array('integer', 'bigint', 'smallint'))) {
             $parameterType = Connection::PARAM_INT_ARRAY;
+
+            // Filter out non-integer values (e.g. ""). If we don't, some
+            // databases such as PostgreSQL fail.
+            $values = array_values(array_filter($values, function ($v) {
+                return (string) $v === (string) (int) $v;
+            }));
         } else {
             $parameterType = Connection::PARAM_STR_ARRAY;
+        }
+        if (!$values) {
+            return array();
         }
 
         return $qb->andWhere($where)

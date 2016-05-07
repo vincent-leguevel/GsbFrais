@@ -82,7 +82,7 @@ class MaskBuilder extends AbstractMaskBuilder
             if ('1' === $bitmask[$i]) {
                 try {
                     $pattern[$i] = self::getCode(1 << ($length - $i - 1));
-                } catch (\Exception $notPredefined) {
+                } catch (\Exception $e) {
                     $pattern[$i] = self::ON;
                 }
             }
@@ -124,7 +124,7 @@ class MaskBuilder extends AbstractMaskBuilder
     }
 
     /**
-     * Returns the mask for the passed code
+     * Returns the mask for the passed code.
      *
      * @param mixed $code
      *

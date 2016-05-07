@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\ExpressionLanguage\Expression;
 
@@ -172,6 +173,7 @@ class YamlFileLoader extends FileLoader
         }
 
         if (isset($service['synchronized'])) {
+            @trigger_error(sprintf('The "synchronized" key of service "%s" in file "%s" is deprecated since version 2.7 and will be removed in 3.0.', $id, $file), E_USER_DEPRECATED);
             $definition->setSynchronized($service['synchronized'], 'request' !== $id);
         }
 
@@ -201,14 +203,17 @@ class YamlFileLoader extends FileLoader
         }
 
         if (isset($service['factory_class'])) {
+            @trigger_error(sprintf('The "factory_class" key of service "%s" in file "%s" is deprecated since version 2.6 and will be removed in 3.0. Use "factory" instead.', $id, $file), E_USER_DEPRECATED);
             $definition->setFactoryClass($service['factory_class']);
         }
 
         if (isset($service['factory_method'])) {
+            @trigger_error(sprintf('The "factory_method" key of service "%s" in file "%s" is deprecated since version 2.6 and will be removed in 3.0. Use "factory" instead.', $id, $file), E_USER_DEPRECATED);
             $definition->setFactoryMethod($service['factory_method']);
         }
 
         if (isset($service['factory_service'])) {
+            @trigger_error(sprintf('The "factory_service" key of service "%s" in file "%s" is deprecated since version 2.6 and will be removed in 3.0. Use "factory" instead.', $id, $file), E_USER_DEPRECATED);
             $definition->setFactoryService($service['factory_service']);
         }
 
@@ -312,7 +317,13 @@ class YamlFileLoader extends FileLoader
             $this->yamlParser = new YamlParser();
         }
 
-        return $this->validate($this->yamlParser->parse(file_get_contents($file)), $file);
+        try {
+            $configuration = $this->yamlParser->parse(file_get_contents($file));
+        } catch (ParseException $e) {
+            throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
+        }
+
+        return $this->validate($configuration, $file);
     }
 
     /**

@@ -969,15 +969,60 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(feof($retval));
     }
 
+    public function testGetContentReturnsResourceWhenContentSetInConstructor()
+    {
+        $req = new Request(array(), array(), array(), array(), array(), array(), 'MyContent');
+        $resource = $req->getContent(true);
+
+        $this->assertTrue(is_resource($resource));
+        $this->assertEquals('MyContent', stream_get_contents($resource));
+    }
+
+    public function testContentAsResource()
+    {
+        $resource = fopen('php://memory', 'r+');
+        fwrite($resource, 'My other content');
+        rewind($resource);
+
+        $req = new Request(array(), array(), array(), array(), array(), array(), $resource);
+        $this->assertEquals('My other content', stream_get_contents($req->getContent(true)));
+        $this->assertEquals('My other content', $req->getContent());
+    }
+
     /**
      * @expectedException \LogicException
      * @dataProvider getContentCantBeCalledTwiceWithResourcesProvider
      */
     public function testGetContentCantBeCalledTwiceWithResources($first, $second)
     {
+        if (PHP_VERSION_ID >= 50600) {
+            $this->markTestSkipped('PHP >= 5.6 allows to open php://input several times.');
+        }
+
         $req = new Request();
         $req->getContent($first);
         $req->getContent($second);
+    }
+
+    /**
+     * @dataProvider getContentCantBeCalledTwiceWithResourcesProvider
+     * @requires PHP 5.6
+     */
+    public function testGetContentCanBeCalledTwiceWithResources($first, $second)
+    {
+        $req = new Request();
+        $a = $req->getContent($first);
+        $b = $req->getContent($second);
+
+        if ($first) {
+            $a = stream_get_contents($a);
+        }
+
+        if ($second) {
+            $b = stream_get_contents($b);
+        }
+
+        $this->assertEquals($a, $b);
     }
 
     public function getContentCantBeCalledTwiceWithResourcesProvider()
@@ -985,7 +1030,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         return array(
             'Resource then fetch' => array(true, false),
             'Resource then resource' => array(true, true),
-            'Fetch then resource' => array(false, true),
         );
     }
 
@@ -1213,12 +1257,11 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($request->isXmlHttpRequest());
     }
 
+    /**
+     * @requires extension intl
+     */
     public function testIntlLocale()
     {
-        if (!extension_loaded('intl')) {
-            $this->markTestSkipped('The intl extension is needed to run this test.');
-        }
-
         $request = new Request();
 
         $request->setDefaultLocale('fr');

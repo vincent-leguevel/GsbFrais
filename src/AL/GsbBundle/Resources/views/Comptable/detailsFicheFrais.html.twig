@@ -1,4 +1,4 @@
-﻿{% extends 'ALGsbBundle::base.html.twig' %}
+{% extends 'ALGsbBundle::base.html.twig' %}
 
 
 {% block head %}
@@ -42,9 +42,7 @@
                             </tr>
                         </tbody>
                     </table>
-
                     <hr>
-
                     <p>Montant validé</p>
                     <table class="table table-hover">
                         <tbody>
@@ -62,13 +60,15 @@
                             <tr>
                                 <th>Libelle</th>
                                 <th>Quantité</th>
+                                <th>Montant</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for ligneFraisForfait in ficheFrais.lignesFraisForfait%}
                                 <tr>
                                     <td>{{ligneFraisForfait.fraisForfait.libelle}}</td>
-                                    <td>{{ligneFraisForfait.quantite}}</td>
+                                    <td>{{ligneFraisForfait.quantite+0}}</td>
+                                    <td>{{ligneFraisForfait.quantite*ligneFraisForfait.fraisForfait.montant}}€</td>
                                 </tr>
                             {% endfor %}
                             <tr>
