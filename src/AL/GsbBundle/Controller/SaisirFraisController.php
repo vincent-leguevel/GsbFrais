@@ -102,7 +102,7 @@ class SaisirFraisController extends Controller {
         if($form->isValid()){
             $em = $this->getDoctrine()->getManager();
             $ficheFrais = $em->getRepository('ALGsbBundle:FicheFrais')->find($id_ficheFrais);
-            
+            $ficheFrais->setDateModif(new \DateTime(date('Y') . "-" . date('m') . "-" . date('d')));
             $ligneFraisHorsForfait->setFicheFrais($ficheFrais);
             $em->persist($ligneFraisHorsForfait);
             $em->flush();
